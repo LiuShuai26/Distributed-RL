@@ -243,7 +243,7 @@ def main(_):
                     sess.run(init_op)
                     restore_model(sess)
 
-                    writer = tf.summary.FileWriter(opt.summary_dir+"/" + opt.env_name + "-"+str(opt.num_workers), sess.graph)
+                    writer = tf.summary.FileWriter(opt.summary_dir+"/" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
 
                     stats = []
                     for step in range(opt.max_episodes):

@@ -33,5 +33,5 @@ class Parameters():
         self.parameter_servers = ["localhost:2222"]
         self.workers = []
         for i in range(workers_num):
-            self.workers.append("localhost:"+str(2333+i))
+            self.workers.append("localhost:"+str(2223+i))
         self.num_workers      = workers_num
