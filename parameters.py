@@ -34,4 +34,4 @@ class Parameters():
         self.workers = []
         for i in range(workers_num):
             self.workers.append("localhost:"+str(2223+i))
-        self.num_workers      = workers_num
+        self.workers_num      = workers_num
