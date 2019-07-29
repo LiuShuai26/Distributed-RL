@@ -184,7 +184,7 @@ def main(_):
 
                 env = gym.make(opt.env_name)
                 if is_chief:
-                    env = wrappers.Monitor(env,'./tmp/',force=True)
+                    env = wrappers.Monitor(env, './tmp/', video_callable=False, force=True)
 
                 if opt.env_name == 'MountainCarContinuous-v0':
                     observation_examples = np.array([env.observation_space.sample() for x in range(10000)])
