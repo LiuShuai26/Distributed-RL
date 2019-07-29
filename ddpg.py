@@ -118,7 +118,6 @@ def train(sess, current_step, opt, env, actor, critic, train_ops, training_vars,
             break
 
     if is_chief:
-        print("chief!")
         summary_str = sess.run(train_ops, feed_dict={
             training_vars[0]: ep_reward,
             training_vars[1]: ep_ave_max_q / float(t),
@@ -126,7 +125,6 @@ def train(sess, current_step, opt, env, actor, critic, train_ops, training_vars,
         })
         writer.add_summary(summary_str, current_step)
         writer.flush()
-        print("writer flushed")
 
     print('Episode: %d - Iterations: %d - Reward: %f' % (current_step, t, ep_reward))
 
