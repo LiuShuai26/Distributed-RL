@@ -16,7 +16,7 @@ class Parameters():
 
         self.tau              = 0.001    # moving average for target network
 
-        self.max_episodes     = 50000
+        self.max_episodes     = 50
 
         self.valid_freq       = 100
         self.train_steps      = 5

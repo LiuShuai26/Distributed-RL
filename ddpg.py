@@ -240,8 +240,9 @@ def main(_):
                 with tf.Session(server.target) as sess:
                     sess.run(init_op)
                     restore_model(sess)
-
-                    writer = tf.summary.FileWriter(opt.summary_dir+"/" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
+                    import datetime
+                    # TODO add is_chief here
+                    writer = tf.summary.FileWriter(opt.summary_dir+"/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
 
                     stats = []
                     for step in range(opt.max_episodes):
