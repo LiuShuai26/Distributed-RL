@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/auto_run.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ddpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/ddpg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/parameters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp/openaigym.episode_batch.0.15730.stats.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp/openaigym.manifest.0.15730.manifest.json" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="643">
-              <caret line="251" column="27" selection-start-line="251" selection-start-column="27" selection-end-line="251" selection-end-column="27" />
+            <state relative-caret-position="-865">
+              <caret line="59" column="102" selection-start-line="59" selection-start-column="96" selection-end-line="59" selection-end-column="102" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -107,18 +102,6 @@
               <item name="DRL" type="462c0819:PsiDirectoryNode" />
               <item name="tboard_ddpg" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="DRL" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DRL" type="462c0819:PsiDirectoryNode" />
-              <item name="tboard_ddpg" type="462c0819:PsiDirectoryNode" />
-              <item name="2019-07-29 18:46:29.873540-MountainCarContinuous-v0-workers_num:2" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DRL" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DRL" type="462c0819:PsiDirectoryNode" />
-              <item name="tboard_ddpg" type="462c0819:PsiDirectoryNode" />
-              <item name="2019-07-29 18:46:30.505837-MountainCarContinuous-v0-workers_num:2" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -171,13 +154,29 @@
       <option name="presentableId" value="Default" />
       <updated>1564393206376</updated>
     </task>
+    <task id="LOCAL-00001" summary="pycharm commit">
+      <created>1564403457252</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1564403457252</updated>
+    </task>
+    <task id="LOCAL-00002" summary="pycharm commit">
+      <created>1564403819044</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1564403819044</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2560" y="-4" width="2560" height="1444" extended-state="6" />
+    <frame x="-2560" y="-1444" width="2560" height="1444" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2774931" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22782815" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" />
@@ -194,6 +193,10 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="pycharm commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="pycharm commit" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/replay_buffer.py">
@@ -227,8 +230,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="251" column="27" selection-start-line="251" selection-start-column="27" selection-end-line="251" selection-end-column="27" />
+        <state relative-caret-position="-865">
+          <caret line="59" column="102" selection-start-line="59" selection-start-column="96" selection-end-line="59" selection-end-column="102" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
