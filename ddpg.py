@@ -242,8 +242,10 @@ def main(_):
                     restore_model(sess)
                     import datetime
                     # TODO add is_chief here
-                    writer = tf.summary.FileWriter(opt.summary_dir+"/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
-
+                    if is_chief:
+                        writer = tf.summary.FileWriter(opt.summary_dir+"/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
+                    else:
+                        writer = None
                     stats = []
                     for step in range(opt.max_episodes):
                         '''
