@@ -7,6 +7,7 @@ import tflearn
 import sys
 import os
 import time
+import datetime
 import itertools
 from sklearn.preprocessing import StandardScaler
 
@@ -59,9 +60,9 @@ def build_summaries():
 # ===========================
 def train(sess, current_step, opt, env, actor, critic, train_ops, training_vars, replay_buffer, writer, is_chief):
     noise = UONoise()
-    state = env.reset()
 
     ep_reward = 0.0
+    state = env.reset()
     ep_ave_max_q = 0.0
     value_loss = 0.0
 
@@ -130,6 +131,7 @@ def train(sess, current_step, opt, env, actor, critic, train_ops, training_vars,
 
     return ep_reward
 
+
 def test(sess, current_step, opt, env, actor, critic, valid_ops, valid_vars, writer):
     valid_r = 0
     state = env.reset()
@@ -154,8 +156,9 @@ def test(sess, current_step, opt, env, actor, critic, valid_ops, valid_vars, wri
 
     return valid_r
 
+
 def save_model(sess, saver, opt, global_step):
-    save_path = saver.save(sess, opt.save_dir + "/model", global_step=global_step)
+    save_path = saver.save(sess, opt.save_dir + "/model-workers_num:"+str(opt.workers_num), global_step=global_step)
     print('-------------------------------------')
     print("Model saved in file: %s" % save_path)
     print('-------------------------------------')
@@ -182,6 +185,7 @@ def main(_):
 
                 env = gym.make(opt.env_name)
                 if is_chief:
+                    # env = wrappers.Monitor(env, './tmp/', force=True)
                     env = wrappers.Monitor(env, './tmp/', video_callable=False, force=True)
 
                 if opt.env_name == 'MountainCarContinuous-v0':
@@ -240,8 +244,7 @@ def main(_):
                 with tf.Session(server.target) as sess:
                     sess.run(init_op)
                     restore_model(sess)
-                    import datetime
-                    # TODO add is_chief here
+
                     if is_chief:
                         writer = tf.summary.FileWriter(opt.summary_dir+"/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
                     else:
@@ -254,19 +257,16 @@ def main(_):
                         '''
 
                         current_step = sess.run(global_step)
+                        if current_step > opt.max_episodes:
+                            break
+
+
                         # Train normally
                         reward = train(sess, current_step, opt, env, actor, critic, train_ops, training_vars, replay_buffer, writer, is_chief)
                         stats.append(reward)
 
-                        if np.mean(stats[-100:]) > 950 and len(stats) >= 101:
-                            print(np.mean(stats[-100:]))
-                            print("Solved.")
-                            if is_chief:
-                                save_model(sess, saver, opt, global_step)
-                            break
-
-                        if is_chief and step % opt.valid_freq == opt.valid_freq-1:
-                            #test_r = test(sess, current_step, opt, env, actor, critic, valid_ops, valid_vars, writer)
+                        if is_chief and current_step % opt.valid_freq == opt.valid_freq-1:
+                            # test_r = test(sess, current_step, opt, env, actor, critic, valid_ops, valid_vars, writer)
                             save_model(sess, saver, opt, global_step)
 
                         # Increase global_step

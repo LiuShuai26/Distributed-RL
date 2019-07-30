@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ps_num=1
-worker_num=16
+worker_num=3
 
 
 #let "ps_num -= 1"
@@ -15,6 +15,6 @@ done
 
 for i in `eval echo {0..$(($worker_num-1))}`
 do
-  CUDA_VISIBLE_DEVICES='' python ddpg.py --job_name="worker" --workers_num $worker_num --task_index=$i &
+  CUDA_VISIBLE_DEVICES=$i python ddpg.py --job_name="worker" --workers_num $worker_num --task_index=$i &
 done
 

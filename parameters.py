@@ -2,8 +2,9 @@ import numpy as np
 import os
 import sys
 
+
 class Parameters():
-    def __init__(self, workers_num):
+    def __init__(self, workers_num=1):
         # hyperparameters
         self.seed = 1234
 
@@ -16,13 +17,13 @@ class Parameters():
 
         self.tau              = 0.001    # moving average for target network
 
-        self.max_episodes     = 50
+        self.max_episodes     = 500
 
         self.valid_freq       = 100
         self.train_steps      = 5
 
         self.train = True
-        self.continue_training=False
+        self.continue_training = False
 
         # self.env_name         = 'Pendulum-v0'   # 'MountainCarContinuous-v0'
         self.env_name = 'MountainCarContinuous-v0'
