@@ -184,9 +184,9 @@ def main(_):
                 step_op = global_step.assign(global_step+1)
 
                 env = gym.make(opt.env_name)
-                if is_chief:
-                    # env = wrappers.Monitor(env, './tmp/', force=True)
-                    env = wrappers.Monitor(env, './tmp/', video_callable=False, force=True)
+                # if is_chief:
+                #     # env = wrappers.Monitor(env, './tmp/', force=True)
+                #     env = wrappers.Monitor(env, './tmp/', video_callable=False, force=True)
 
                 # if opt.env_name == 'MountainCarContinuous-v0':
                 #     observation_examples = np.array([env.observation_space.sample() for x in range(10000)])
