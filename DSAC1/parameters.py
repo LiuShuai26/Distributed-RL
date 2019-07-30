@@ -6,7 +6,7 @@ import sys
 class Parameters():
     def __init__(self, workers_num=1):
         # hyperparameters
-        self.seed = 1234
+        self.seed = 0
 
         self.max_exploration_episodes = 500
         self.batch_size       = 256      # batch size during training
@@ -20,13 +20,15 @@ class Parameters():
         self.max_episodes     = 500
 
         self.valid_freq       = 100
-        self.train_steps      = 5
+        # self.train_steps      = 5
 
         self.train = True
         self.continue_training = False
 
-        # self.env_name         = 'Pendulum-v0'   # 'MountainCarContinuous-v0'
-        self.env_name = 'MountainCarContinuous-v0'
+        self.env_name         = 'Pendulum-v0'   # 'MountainCarContinuous-v0'
+        # BipedalWalker-v2
+        # Pendulum-v0
+        # self.env_name = 'MountainCarContinuous-v0'
 
         self.summary_dir = './tboard_ddpg'  # Directory for storing tensorboard summary results
         self.save_dir = './model_ddpg'      # Directory for storing trained model
@@ -35,4 +37,4 @@ class Parameters():
         self.workers = []
         for i in range(workers_num):
             self.workers.append("localhost:"+str(2223+i))
-        self.workers_num      = workers_num
+        self.workers_num = workers_num
