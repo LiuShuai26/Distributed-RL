@@ -50,9 +50,9 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
                 ep_len += 1
             logger.store(TestEpRet=ep_ret, TestEpLen=ep_len)
 
-
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
-
+    total_reward = 0
+    episodes = 0
     # Main loop: collect experience in env and update/log each epoch
     for t in range(steps_per_epoch):
         """
@@ -61,7 +61,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
         use the learned policy. 
         """
 
-        if current_step > 1:
+        if current_step > 0:
             a = get_action(o)
         else:
             a = env.action_space.sample()
@@ -91,6 +91,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
             This is a slight difference from the SAC specified in the
             original paper.
             """
+            # why ep_len times update?
             for j in range(ep_len):
                 batch = replay_buffer.sample_batch(batch_size)
                 feed_dict = {x_ph: batch['obs1'],
@@ -105,11 +106,14 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
                     logger.store(LossPi=outs[0], LossQ1=outs[1], LossQ2=outs[2],
                                 Q1Vals=outs[3], Q2Vals=outs[4],
                                 LogPi=outs[5], Alpha=outs[6])
+            total_reward += ep_ret
+            episodes += 1
             if is_chief:
                 logger.store(EpRet=ep_ret, EpLen=ep_len)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
-        # End of epoch wrap-up
+    print("epoch:", current_step, "average reward:", total_reward/episodes)
+    # End of epoch wrap-up
     # TODO
     if is_chief:
         epoch = current_step
@@ -176,8 +180,9 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
 #
 #     actor_critic = core.mlp_actor_critic
     # TODO is_chief
-    logger = EpochLogger(**logger_kwargs)
-    logger.save_config(locals())
+    if FLAGS.job_name == "worker" and FLAGS.task_index == 0:
+        logger = EpochLogger(**logger_kwargs)
+        logger.save_config(locals())
 
     if opt.train:
         cluster = tf.train.ClusterSpec({"ps":opt.parameter_servers, "worker":opt.workers})
@@ -330,6 +335,9 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
 
                     # total_steps = steps_per_epoch * epochs
                     start_time = time.time()
+
+                    # TODO max_episodes = total episodes / workers_num
+                    # episode should be epoch
                     for _ in range(opt.max_episodes):
                         '''
                         if sv.should_stop():
@@ -337,6 +345,7 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
                         '''
 
                         current_step = sess.run(global_step)
+                        # TODO remove
                         if current_step > opt.max_episodes:
                             break
 
@@ -397,7 +406,7 @@ if __name__ == '__main__':
 
     opt = Parameters(FLAGS.workers_num)
     from spinup.utils.run_utils import setup_logger_kwargs
-    logger_kwargs = setup_logger_kwargs(opt.env_name, opt.seed)
+    logger_kwargs = setup_logger_kwargs(opt.env_name, 8)
     main(lambda : gym.make(opt.env_name), actor_critic=core.mlp_actor_critic,
         ac_kwargs=dict(hidden_sizes=[400, 300]),
         gamma=gamma, seed=opt.seed, epochs=epochs, alpha=alpha, logger_kwargs=logger_kwargs, opt=opt)

@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="dsac1">
-      <change afterPath="$PROJECT_DIR$/tf_distributed.py" afterDir="false" />
+    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DDDPG/auto_run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/DDDPG/auto_run.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DDDPG/ddpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/DDDPG/ddpg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DDDPG/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/DDDPG/parameters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DDDPG/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/DDDPG/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/dsac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/dsac1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DSAC1/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/parameters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/sac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/sac1.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="502">
-              <caret line="129" column="58" lean-forward="true" selection-start-line="129" selection-start-column="58" selection-end-line="129" selection-end-column="58" />
+            <state relative-caret-position="7039">
+              <caret line="418" lean-forward="true" selection-start-line="418" selection-end-line="418" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -34,8 +30,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="641">
-              <caret line="218" column="36" selection-start-line="218" selection-start-column="23" selection-end-line="218" selection-end-column="36" />
+            <state relative-caret-position="1363">
+              <caret line="324" column="70" selection-start-line="324" selection-start-column="57" selection-end-line="324" selection-end-column="70" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -55,8 +51,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="27" column="41" selection-start-line="27" selection-start-column="33" selection-end-line="27" selection-end-column="41" />
+            <state relative-caret-position="418">
+              <caret line="19" column="35" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -67,7 +63,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="791">
+              <caret line="92" column="12" selection-start-line="92" selection-start-column="12" selection-end-line="92" selection-end-column="12" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -78,8 +75,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="20" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="66">
+              <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -87,8 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DDDPG/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="60" column="38" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="38" />
+            <state relative-caret-position="674">
+              <caret line="68" column="31" lean-forward="true" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="31" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -116,11 +113,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>stats</find>
-      <find>scaler</find>
-      <find>preprocess_input</find>
-      <find>train</find>
-      <find>train_steps</find>
       <find>act_limit</find>
       <find>get_action</find>
       <find>core</find>
@@ -146,6 +138,11 @@
       <find>log_tabular</find>
       <find>batch_size</find>
       <find>max_ep_len</find>
+      <find>train_ops</find>
+      <find>valid_ops</find>
+      <find>training_vars</find>
+      <find>build_summaries</find>
+      <find>training_summaries</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -165,16 +162,16 @@
         <option value="$PROJECT_DIR$/sac1.py" />
         <option value="$PROJECT_DIR$/dsac1.py" />
         <option value="$PROJECT_DIR$/DSAC1/replay_buffer.py" />
-        <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
         <option value="$PROJECT_DIR$/DDDPG/kill_all.sh" />
         <option value="$PROJECT_DIR$/DSAC1/kill_all.sh" />
-        <option value="$PROJECT_DIR$/DSAC1/auto_run.sh" />
         <option value="$PROJECT_DIR$/DDDPG/parameters.py" />
         <option value="$PROJECT_DIR$/DDDPG/test.py" />
         <option value="$PROJECT_DIR$/DDDPG/auto_run.sh" />
         <option value="$PROJECT_DIR$/DDDPG/ddpg.py" />
         <option value="$PROJECT_DIR$/tf_distributed.py" />
         <option value="$PROJECT_DIR$/DSAC1/sac1.py" />
+        <option value="$PROJECT_DIR$/DSAC1/auto_run.sh" />
+        <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
         <option value="$PROJECT_DIR$/DSAC1/dsac1.py" />
       </list>
     </option>
@@ -413,14 +410,21 @@
       <option name="project" value="LOCAL" />
       <updated>1564478649625</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="dsac1 1 worker ok">
+      <created>1564557567618</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1564557567618</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-4" width="2560" height="1444" extended-state="6" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" weight="0.17106819" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.17106819" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info active="true" anchor="bottom" id="Terminal" order="0" sideWeight="0.49980292" visible="true" weight="0.28933632" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5001971" side_tool="true" weight="0.32960477" />
@@ -458,11 +462,13 @@
     </layout-to-restore>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="pycharm commit" />
     <MESSAGE value="auto run ok" />
     <MESSAGE value="add test.py&#10;ddpg.py add new break" />
     <MESSAGE value="dsac1" />
-    <option name="LAST_COMMIT_MESSAGE" value="dsac1" />
+    <MESSAGE value="dsac1 1 worker ok" />
+    <option name="LAST_COMMIT_MESSAGE" value="dsac1 1 worker ok" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/auto_run_gpu.sh">
@@ -593,16 +599,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DDDPG/networks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="64" column="39" lean-forward="true" selection-start-line="64" selection-start-column="39" selection-end-line="64" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DDDPG/replay_buffer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="792">
@@ -627,15 +623,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/kill_all.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -647,33 +634,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="308">
           <caret line="256" selection-start-line="256" selection-end-line="256" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DDDPG/ddpg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="60" column="38" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="27" column="41" selection-start-line="27" selection-start-column="33" selection-end-line="27" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -691,10 +651,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/DDDPG/networks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="682">
+          <caret line="34" column="49" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="791">
+          <caret line="92" column="12" selection-start-line="92" selection-start-column="12" selection-end-line="92" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="641">
-          <caret line="218" column="36" selection-start-line="218" selection-start-column="23" selection-end-line="218" selection-end-column="36" />
+        <state relative-caret-position="1363">
+          <caret line="324" column="70" selection-start-line="324" selection-start-column="57" selection-end-line="324" selection-end-column="70" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DDDPG/ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="674">
+          <caret line="68" column="31" lean-forward="true" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="19" column="35" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -703,8 +710,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="129" column="58" lean-forward="true" selection-start-line="129" selection-start-column="58" selection-end-line="129" selection-end-column="58" />
+        <state relative-caret-position="7039">
+          <caret line="418" lean-forward="true" selection-start-line="418" selection-end-line="418" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>

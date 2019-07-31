@@ -17,7 +17,7 @@ class Parameters():
 
         self.tau              = 0.001    # moving average for target network
 
-        self.max_episodes     = 500
+        self.max_episodes     = 100
 
         self.valid_freq       = 100
         # self.train_steps      = 5
@@ -25,7 +25,7 @@ class Parameters():
         self.train = True
         self.continue_training = False
 
-        self.env_name         = 'Pendulum-v0'   # 'MountainCarContinuous-v0'
+        self.env_name         = 'LunarLanderContinuous-v2'   # 'MountainCarContinuous-v0'
         # BipedalWalker-v2
         # Pendulum-v0
         # self.env_name = 'MountainCarContinuous-v0'
