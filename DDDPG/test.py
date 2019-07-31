@@ -17,13 +17,7 @@ opt = Parameters()
 env = gym.make(opt.env_name)
 # env = wrappers.Monitor(env, './tmp/', force=True)
 
-
-if opt.env_name == 'MountainCarContinuous-v0':
-    observation_examples = np.array([env.observation_space.sample() for x in range(10000)])
-    scaler = StandardScaler()
-    scaler.fit(observation_examples)
-else:
-    scaler = None
+scaler = None
 
 state_dim = env.observation_space.shape[0]
 action_dim = env.action_space.shape[0]
@@ -33,7 +27,7 @@ critic = CriticNetwork(state_dim, action_dim, opt.critic_lr, opt.tau, actor.get_
 saver = tf.train.Saver(max_to_keep=5)
 
 
-num_tests = 10
+num_tests = 100
 
 
 with tf.Session() as sess:
@@ -44,7 +38,7 @@ with tf.Session() as sess:
     critic.restore_params(tf.trainable_variables())
 
     total_reward = 0
-    for _ in range(num_tests):
+    for n in range(num_tests):
         # env.render()
         state = env.reset()
 
@@ -54,12 +48,12 @@ with tf.Session() as sess:
             a = actor.predict_target(input_s)
 
             state2, r, done, _ = env.step(a[0])
-            env.render()
+            # env.render()
             reward += r
             state = state2
 
             if done:
-                print(reward)
+                print(n, reward)
                 total_reward += reward
                 break
     print("mean reward:", total_reward/num_tests)

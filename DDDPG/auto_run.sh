@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ps_num=1
-worker_num=8
+worker_num=6
 
 
 #let "ps_num -= 1"

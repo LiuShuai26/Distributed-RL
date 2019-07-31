@@ -25,7 +25,7 @@ class Parameters():
         self.train = True
         self.continue_training = False
 
-        self.env_name         = 'BipedalWalker-v2'   # 'MountainCarContinuous-v0'
+        self.env_name         = 'Pendulum-v0'   # 'MountainCarContinuous-v0'
         # BipedalWalker-v2
         # Pendulum-v0
         # self.env_name = 'MountainCarContinuous-v0'

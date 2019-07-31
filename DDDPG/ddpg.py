@@ -129,8 +129,6 @@ def train(sess, current_step, opt, env, actor, critic, train_ops, training_vars,
 
     print('Episode: %d - Iterations: %d - Reward: %f' % (current_step, t, ep_reward))
 
-    return ep_reward
-
 
 def test(sess, current_step, opt, env, actor, critic, valid_ops, valid_vars, writer):
     valid_r = 0
@@ -177,7 +175,8 @@ def main(_):
         if FLAGS.job_name == "ps":
             server.join()
         elif FLAGS.job_name == "worker":
-            with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index,cluster=cluster)):
+            with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index,
+                                                          cluster=cluster)):
                 is_chief = (FLAGS.task_index == 0)
                 # count the number of updates
                 global_step = tf.get_variable('global_step',[],initializer = tf.constant_initializer(0),trainable = False)
@@ -262,8 +261,8 @@ def main(_):
                             break
 
                         # Train normally
-                        reward = train(sess, current_step, opt, env, actor, critic, train_ops, training_vars,
-                                       replay_buffer, writer, is_chief)
+                        train(sess, current_step, opt, env, actor, critic, train_ops, training_vars,
+                              replay_buffer, writer, is_chief)
                         # if current_step > 30 and reward < 0:
                         #     break
 
