@@ -36,7 +36,7 @@ class Parameters:
         self.max_exploration_episodes = 500
         self.batch_size = 256      # batch size during training
         # TODO reduce rm_size
-        self.rm_size = 1000000    # memory replay maximum size
+        self.rm_size = 1000000//self.workers_num   # memory replay maximum size
         self.tau = 0.001    # moving average for target network
 
         self.valid_freq = 100

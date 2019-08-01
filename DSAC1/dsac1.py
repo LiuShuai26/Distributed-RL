@@ -198,7 +198,8 @@ def main(_):
                 # Count variables
                 var_counts = tuple(core.count_vars(scope) for scope in
                                    ['main/pi', 'main/q1', 'main/q2', 'main'])
-                print(('\nNumber of parameters: \t pi: %d, \t' + 'q1: %d, \t q2: %d, \t total: %d\n') % var_counts)
+                if is_chief:
+                    print(('\nNumber of parameters: \t pi: %d, \t' + 'q1: %d, \t q2: %d, \t total: %d\n') % var_counts)
 
                 # TODO alpha never use
                 ######
@@ -322,7 +323,7 @@ def main(_):
 
                 print('Done')
 
-                # TODO not perfect
+                # TODO might not work well
                 if is_chief:
                     killall = 'pkill -9 -f dsac1.py'
                     os.system(killall)
