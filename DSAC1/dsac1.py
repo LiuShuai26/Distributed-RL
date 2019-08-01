@@ -1,15 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from parameters import Parameters
-import gym
-from gym import wrappers
-import tflearn
-import sys
 import os
-import time
-import datetime
-import itertools
-
 from numbers import Number
 import gym
 import time
