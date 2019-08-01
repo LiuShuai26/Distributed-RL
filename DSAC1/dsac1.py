@@ -15,6 +15,7 @@ import gym
 import time
 import core
 from core import get_vars
+from core import mlp_actor_critic as actor_critic
 from spinup.utils.logx import EpochLogger
 
 
@@ -23,16 +24,17 @@ from spinup.utils.run_utils import setup_logger_kwargs
 
 from replay_buffer import ReplayBuffer
 
-# input flags
-tf.app.flags.DEFINE_string("job_name", "", "Either 'ps' or 'worker'")
-tf.app.flags.DEFINE_integer("workers_num", 1, "number of workers")
-tf.app.flags.DEFINE_integer("task_index", 0, "Index of task within the job")
 
+flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
+
+flags.DEFINE_string("job_name", "", "Either 'ps' or 'worker'")
+flags.DEFINE_integer("workers_num", 1, "number of workers")
+flags.DEFINE_integer("task_index", 0, "Index of task within the job")
 
 
 #   Agent Training
-def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_per_epoch, epochs, start_steps,
+def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_per_epoch, epochs, start_steps, # TODO start_steps
           batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, save_freq, is_chief, current_step, mu, pi, start_time):
     def get_action(o, deterministic=False):
         act_op = mu if deterministic else pi
@@ -114,7 +116,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
 
     print("epoch:", current_step, "average reward:", total_reward/episodes)
     # End of epoch wrap-up
-    # TODO
+
     if is_chief:
         epoch = current_step
 
@@ -143,45 +145,21 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
         logger.log_tabular('LossQ1', average_only=True)
         logger.log_tabular('LossQ2', average_only=True)
         # logger.log_tabular('LossV', average_only=True)
-        # TODO
+
         logger.log_tabular('Time', time.time()-start_time)
         logger.dump_tabular()
 
 
-def save_model(sess, saver, opt, global_step):
-    save_path = saver.save(sess, opt.save_dir + "/model-workers_num:"+str(opt.workers_num), global_step=global_step)
-    print('-------------------------------------')
-    print("Model saved in file: %s" % save_path)
-    print('-------------------------------------')
+def main(_):
 
-
-def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None, seed=0,
-        steps_per_epoch=5000, epochs=100, replay_size=int(1e6), gamma=0.99,
-        polyak=0.995, lr=1e-3, alpha=0.2, batch_size=100, start_steps=10000,
-        max_ep_len=1000, logger_kwargs=dict(), save_freq=1):
-# def main():
     opt = Parameters(FLAGS.workers_num)
+
     np.random.seed(opt.seed)
     tf.set_random_seed(opt.seed)
 
-#     ac_kwargs=dict(hidden_sizes=[400, 300])
-#     gamma=0.99
-#     epochs=500
-#     alpha=0.1
-#     replay_size = int(1e6)
-#     lr = 1e-3
-#     polyak = 0.995
-#
-#     steps_per_epoch = 5000
-#     batch_size = 100
-#     start_steps = 10000
-#     max_ep_len = 1000
-#     save_freq = 1
-#
-#     actor_critic = core.mlp_actor_critic
-    # TODO is_chief
+    # TODO not perfect
     if FLAGS.job_name == "worker" and FLAGS.task_index == 0:
-        logger = EpochLogger(**logger_kwargs)
+        logger = EpochLogger(**opt.logger_kwargs)
         logger.save_config(locals())
 
     if opt.train:
@@ -200,6 +178,7 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
                                               trainable=False)
                 step_op = global_step.assign(global_step+1)
 
+                # TODO remove
                 if is_chief:
                     pass
                     # logger = EpochLogger(**logger_kwargs)
@@ -215,30 +194,30 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
                 act_limit = env.action_space.high[0]
 
                 # Share information about action space with policy architecture
-                ac_kwargs['action_space'] = env.action_space
+                opt.ac_kwargs['action_space'] = env.action_space
 
                 # Inputs to computation graph
                 x_ph, a_ph, x2_ph, r_ph, d_ph = core.placeholders(obs_dim, act_dim, obs_dim, None, None)
 
                 # Main outputs from computation graph
                 with tf.variable_scope('main'):
-                    mu, pi, logp_pi, logp_pi2, q1, q2, q1_pi, q2_pi = actor_critic(x_ph, x2_ph, a_ph, **ac_kwargs)
+                    mu, pi, logp_pi, logp_pi2, q1, q2, q1_pi, q2_pi = actor_critic(x_ph, x2_ph, a_ph, **opt.ac_kwargs)
 
                 # Target value network
                 with tf.variable_scope('target'):
-                    _, _, logp_pi_, _, _, _, q1_pi_, q2_pi_ = actor_critic(x2_ph, x2_ph, a_ph, **ac_kwargs)
+                    _, _, logp_pi_, _, _, _, q1_pi_, q2_pi_ = actor_critic(x2_ph, x2_ph, a_ph, **opt.ac_kwargs)
 
                 # Experience buffer
-                replay_buffer = ReplayBuffer(obs_dim=obs_dim, act_dim=act_dim, size=replay_size)
+                replay_buffer = ReplayBuffer(obs_dim=obs_dim, act_dim=act_dim, size=opt.replay_size)
 
                 # Count variables
                 var_counts = tuple(core.count_vars(scope) for scope in
                                    ['main/pi', 'main/q1', 'main/q2', 'main'])
-                print(('\nNumber of parameters: \t pi: %d, \t' + \
-                       'q1: %d, \t q2: %d, \t total: %d\n') % var_counts)
+                print(('\nNumber of parameters: \t pi: %d, \t' + 'q1: %d, \t q2: %d, \t total: %d\n') % var_counts)
 
+                # TODO alpha never use
                 ######
-                if alpha == 'auto':
+                if opt.alpha == 'auto':
                     target_entropy = (-np.prod(env.action_space.shape))
 
                     log_alpha = tf.get_variable('log_alpha', dtype=tf.float32, initializer=0.0)
@@ -246,7 +225,7 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
 
                     alpha_loss = tf.reduce_mean(-log_alpha * tf.stop_gradient(logp_pi + target_entropy))
 
-                    alpha_optimizer = tf.train.AdamOptimizer(learning_rate=lr, name='alpha_optimizer')
+                    alpha_optimizer = tf.train.AdamOptimizer(learning_rate=opt.lr, name='alpha_optimizer')
                     train_alpha_op = alpha_optimizer.minimize(loss=alpha_loss, var_list=[log_alpha])
                 ######
 
@@ -254,23 +233,23 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
                 min_q_pi = tf.minimum(q1_pi_, q2_pi_)
 
                 # Targets for Q and V regression
-                v_backup = tf.stop_gradient(min_q_pi - alpha * logp_pi2)
-                q_backup = r_ph + gamma * (1 - d_ph) * v_backup
+                v_backup = tf.stop_gradient(min_q_pi - opt.alpha * logp_pi2)
+                q_backup = r_ph + opt.gamma * (1 - d_ph) * v_backup
 
                 # Soft actor-critic losses
-                pi_loss = tf.reduce_mean(alpha * logp_pi - q1_pi)
+                pi_loss = tf.reduce_mean(opt.alpha * logp_pi - q1_pi)
                 q1_loss = 0.5 * tf.reduce_mean((q_backup - q1) ** 2)
                 q2_loss = 0.5 * tf.reduce_mean((q_backup - q2) ** 2)
                 value_loss = q1_loss + q2_loss
 
                 # Policy train op
                 # (has to be separate from value train op, because q1_pi appears in pi_loss)
-                pi_optimizer = tf.train.AdamOptimizer(learning_rate=lr)
+                pi_optimizer = tf.train.AdamOptimizer(learning_rate=opt.lr)
                 train_pi_op = pi_optimizer.minimize(pi_loss, var_list=get_vars('main/pi'))
 
                 # Value train op
                 # (control dep of train_pi_op because sess.run otherwise evaluates in nondeterministic order)
-                value_optimizer = tf.train.AdamOptimizer(learning_rate=lr)
+                value_optimizer = tf.train.AdamOptimizer(learning_rate=opt.lr)
                 value_params = get_vars('main/q')
                 with tf.control_dependencies([train_pi_op]):
                     train_value_op = value_optimizer.minimize(value_loss, var_list=value_params)
@@ -278,23 +257,23 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
                 # Polyak averaging for target variables
                 # (control flow because sess.run otherwise evaluates in nondeterministic order)
                 with tf.control_dependencies([train_value_op]):
-                    target_update = tf.group([tf.assign(v_targ, polyak * v_targ + (1 - polyak) * v_main)
+                    target_update = tf.group([tf.assign(v_targ, opt.polyak * v_targ + (1 - opt.polyak) * v_main)
                                               for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
 
                 # All ops to call during one training step
-                if isinstance(alpha, Number):
-                    step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, tf.identity(alpha),
+                if isinstance(opt.alpha, Number):
+                    step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, tf.identity(opt.alpha),
                                 train_pi_op, train_value_op, target_update]
                 else:
-                    step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, alpha,
+                    step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, opt.alpha,
                                 train_pi_op, train_value_op, target_update, train_alpha_op]
 
                 # Initializing targets to match main variables
                 target_init = tf.group([tf.assign(v_targ, v_main)
                                         for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
 
+                # TODO should have restore model feature
                 # ^--------------------------------------------------------------------------------------------
-
                 # Add ops to save and restore all the variables.
                 # saver = tf.train.Saver(max_to_keep=5)
 
@@ -350,8 +329,8 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
                             break
 
                         # Train normally
-                        train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_per_epoch, epochs,
-                              start_steps, batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, save_freq, is_chief,
+                        train(sess, env, replay_buffer, x_ph, test_env, opt.max_ep_len, logger, opt.steps_per_epoch, opt.epochs,
+                              opt.start_steps, opt.batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, opt.save_freq, is_chief,
                               current_step, mu, pi, start_time)
                         # train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_per_epoch, epochs,
                         #       start_steps, batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, save_freq, is_chief)
@@ -374,39 +353,5 @@ def main(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), opt=None,
 
 
 if __name__ == '__main__':
-    # tf.app.run()
-    # main()
-    # import argparse
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--env', type=str, default='Pendulum-v0')  # 'Pendulum-v0'
-    # parser.add_argument('--hid', type=int, default=300)
-    # parser.add_argument('--l', type=int, default=1)
-    # parser.add_argument('--gamma', type=float, default=0.99)
-    # parser.add_argument('--seed', '-s', type=int, default=0)
-    # parser.add_argument('--epochs', type=int, default=1000)
-    # parser.add_argument('--alpha', default=0.1, help="alpha can be either 'auto' or float(e.g:0.2).")
-    # parser.add_argument('--exp_name', type=str, default='sac1_Pendulum-v0')
-    # args = parser.parse_args()
-    # TODO
-    ac_kwargs=dict(hidden_sizes=[400, 300])
-    gamma=0.99
-    epochs=500
-    alpha=0.1
-    replay_size = int(1e6)
-    lr = 1e-3
-    polyak = 0.995
+    tf.app.run()
 
-    steps_per_epoch = 5000
-    batch_size = 100
-    start_steps = 10000
-    max_ep_len = 1000
-    save_freq = 1
-
-    actor_critic = core.mlp_actor_critic
-
-    opt = Parameters(FLAGS.workers_num)
-    from spinup.utils.run_utils import setup_logger_kwargs
-    logger_kwargs = setup_logger_kwargs(opt.env_name, 8)
-    main(lambda : gym.make(opt.env_name), actor_critic=core.mlp_actor_critic,
-        ac_kwargs=dict(hidden_sizes=[400, 300]),
-        gamma=gamma, seed=opt.seed, epochs=epochs, alpha=alpha, logger_kwargs=logger_kwargs, opt=opt)
