@@ -9,11 +9,6 @@ import core
 from core import get_vars
 from core import mlp_actor_critic as actor_critic
 from spinup.utils.logx import EpochLogger
-
-
-from sklearn.preprocessing import StandardScaler
-from spinup.utils.run_utils import setup_logger_kwargs
-
 from replay_buffer import ReplayBuffer
 
 
@@ -21,6 +16,7 @@ flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 
 flags.DEFINE_string("env_name", "", "game env")
+flags.DEFINE_integer("total_epochs", 100, "total_epochs")
 flags.DEFINE_string("job_name", "", "Either 'ps' or 'worker'")
 flags.DEFINE_integer("workers_num", 1, "number of workers")
 flags.DEFINE_integer("task_index", 0, "Index of task within the job")
@@ -147,7 +143,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
 
 def main(_):
 
-    opt = Parameters(FLAGS.env_name, FLAGS.workers_num)
+    opt = Parameters(FLAGS.env_name, FLAGS.total_epochs, FLAGS.workers_num)
 
     np.random.seed(opt.seed)
     tf.set_random_seed(opt.seed)
