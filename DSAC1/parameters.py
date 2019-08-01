@@ -21,7 +21,7 @@ class Parameters:
         self.alpha = 0.1
         self.ac_kwargs = dict(hidden_sizes=[400, 300])
         self.gamma = 0.99
-        self.replay_size = int(1e6)
+        self.replay_size = 1000000//self.workers_num
         self.lr = 1e-3
         self.polyak = 0.995
 
@@ -32,14 +32,6 @@ class Parameters:
         self.save_freq = 1
 
         self.seed = 0
-
-        self.max_exploration_episodes = 500
-        self.batch_size = 256      # batch size during training
-        # TODO reduce rm_size
-        self.rm_size = 1000000//self.workers_num   # memory replay maximum size
-        self.tau = 0.001    # moving average for target network
-
-        self.valid_freq = 100
 
         self.train = True
         self.continue_training = False
