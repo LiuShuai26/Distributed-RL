@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DSAC1/auto_run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/auto_run.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/dsac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/dsac1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/parameters.py" afterDir="false" />
     </list>
@@ -17,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="151" lean-forward="true" selection-start-line="151" selection-end-line="151" />
+            <state relative-caret-position="418">
+              <caret line="157" column="35" selection-start-line="157" selection-start-column="35" selection-end-line="157" selection-end-column="35" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -29,8 +30,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1144">
-              <caret line="52" selection-start-line="52" selection-end-line="52" />
+            <state relative-caret-position="220">
+              <caret line="13" column="26" lean-forward="true" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -74,8 +75,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="396">
+              <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
             </state>
           </provider>
         </entry>
@@ -112,8 +113,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>action_scale</find>
-      <find>ac_kwargs</find>
       <find>replay_size</find>
       <find>seed</find>
       <find>exp_name</find>
@@ -142,6 +141,8 @@
       <find>alpha</find>
       <find>q1_pi_</find>
       <find>actor_critic</find>
+      <find>epochs</find>
+      <find>episodes</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -419,12 +420,25 @@
       <option name="project" value="LOCAL" />
       <updated>1564569583006</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="dsac1 version0.10 parameter set up ok">
+      <created>1564639406928</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1564639406928</updated>
+    </task>
+    <task id="LOCAL-00012" summary="dsac1 version-0.50 all good">
+      <created>1564647467831</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1564647467831</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="2495" height="1444" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.17556635" />
@@ -472,7 +486,9 @@
     <MESSAGE value="dsac1" />
     <MESSAGE value="dsac1 1 worker ok" />
     <MESSAGE value="dsac1 version0.01" />
-    <option name="LAST_COMMIT_MESSAGE" value="dsac1 version0.01" />
+    <MESSAGE value="dsac1 version0.10 parameter set up ok" />
+    <MESSAGE value="dsac1 version-0.50 all good" />
+    <option name="LAST_COMMIT_MESSAGE" value="dsac1 version-0.50 all good" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/auto_run_gpu.sh">
@@ -695,27 +711,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1144">
-          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        <state relative-caret-position="220">
+          <caret line="13" column="26" lean-forward="true" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="151" lean-forward="true" selection-start-line="151" selection-end-line="151" />
+        <state relative-caret-position="418">
+          <caret line="157" column="35" selection-start-line="157" selection-start-column="35" selection-end-line="157" selection-end-column="35" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>

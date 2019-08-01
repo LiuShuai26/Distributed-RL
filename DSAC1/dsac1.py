@@ -28,6 +28,7 @@ from replay_buffer import ReplayBuffer
 flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 
+flags.DEFINE_string("env_name", "", "game env")
 flags.DEFINE_string("job_name", "", "Either 'ps' or 'worker'")
 flags.DEFINE_integer("workers_num", 1, "number of workers")
 flags.DEFINE_integer("task_index", 0, "Index of task within the job")
@@ -154,7 +155,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
 
 def main(_):
 
-    opt = Parameters(FLAGS.workers_num)
+    opt = Parameters(FLAGS.env_name, FLAGS.workers_num)
 
     np.random.seed(opt.seed)
     tf.set_random_seed(opt.seed)

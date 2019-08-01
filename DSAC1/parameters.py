@@ -6,16 +6,16 @@ from spinup.utils.run_utils import setup_logger_kwargs
 
 
 class Parameters:
-    def __init__(self, workers_num=1):
+    def __init__(self, env_name, workers_num=1):
         # parameters set
 
         # self.env_name = 'LunarLanderContinuous-v2'   # 'MountainCarContinuous-v0'
-        self.env_name = 'Pendulum-v0'
+        self.env_name = env_name
         # BipedalWalker-v2
         # Pendulum-v0
         # self.env_name = 'MountainCarContinuous-v0'
 
-        self.total_epochs = 10
+        self.total_epochs = 100
 
         self.alpha = 0.1
         self.ac_kwargs = dict(hidden_sizes=[400, 300])
