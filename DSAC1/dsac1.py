@@ -34,17 +34,18 @@ flags.DEFINE_integer("task_index", 0, "Index of task within the job")
 
 
 #   Agent Training
-def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_per_epoch, epochs, start_steps, # TODO start_steps
-          batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, save_freq, is_chief, current_step, mu, pi, start_time):
+def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d_ph, step_ops, is_chief,
+          current_epoch, mu, pi, start_time, opt):
+
     def get_action(o, deterministic=False):
         act_op = mu if deterministic else pi
-        return sess.run(act_op, feed_dict={x_ph: o.reshape(1,-1)})[0]
+        return sess.run(act_op, feed_dict={x_ph: o.reshape(1, -1)})[0]
 
     def test_agent(n=10):
         global sess, mu, pi, q1, q2, q1_pi, q2_pi
         for j in range(n):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
-            while not(d or (ep_len == max_ep_len)):
+            while not(d or (ep_len == opt.max_ep_len)):
                 # Take deterministic actions at test time
                 # test_env.render()
                 o, r, d, _ = test_env.step(get_action(o, True))
@@ -56,14 +57,15 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
     total_reward = 0
     episodes = 0
     # Main loop: collect experience in env and update/log each epoch
-    for t in range(steps_per_epoch):
+    for _ in range(opt.steps_per_epoch):
         """
         Until start_steps have elapsed, randomly sample actions
         from a uniform distribution for better exploration. Afterwards, 
         use the learned policy. 
         """
 
-        if current_step > 0:
+        # get action by policy after first "two" epochs
+        if current_epoch > 1:
             a = get_action(o)
         else:
             a = env.action_space.sample()
@@ -77,7 +79,8 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
         # Ignore the "done" signal if it comes from hitting the time
         # horizon (that is, when it's an artificial terminal signal
         # that isn't based on the agent's state)
-        # d = False if ep_len == max_ep_len else d
+        # TODO remove
+        d = False if ep_len == opt.max_ep_len else d
 
         # Store experience to replay buffer
         replay_buffer.store(o, a, r, o2, d)
@@ -87,7 +90,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
         o = o2
 
         # End of episode. Training (ep_len times).
-        if d or (ep_len == max_ep_len):
+        if d or (ep_len == opt.max_ep_len):
             """
             Perform all SAC updates at the end of the trajectory.
             This is a slight difference from the SAC specified in the
@@ -95,13 +98,13 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
             """
             # why ep_len times update?
             for j in range(ep_len):
-                batch = replay_buffer.sample_batch(batch_size)
+                batch = replay_buffer.sample_batch(opt.batch_size)
                 feed_dict = {x_ph: batch['obs1'],
                              x2_ph: batch['obs2'],
                              a_ph: batch['acts'],
                              r_ph: batch['rews'],
                              d_ph: batch['done'],
-                            }
+                             }
                 # step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, alpha, train_pi_op, train_value_op, target_update]
                 outs = sess.run(step_ops, feed_dict)
                 if is_chief:
@@ -114,14 +117,13 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
                 logger.store(EpRet=ep_ret, EpLen=ep_len)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
-    print("epoch:", current_step, "average reward:", total_reward/episodes)
-    # End of epoch wrap-up
+    print("epoch:", current_epoch, "average reward:", total_reward/episodes)
 
+    # End of epoch wrap-up
     if is_chief:
-        epoch = current_step
 
         # Save model
-        if (epoch % save_freq == 0) or (epoch == epochs-1):
+        if (current_epoch % opt.save_freq == 0) or (current_epoch == opt.total_epochs-1):
             logger.save_state({'env': env}, None)
 
         # Test the performance of the deterministic version of the agent.
@@ -129,13 +131,13 @@ def train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_pe
 
         # logger.store(): store the data; logger.log_tabular(): log the data; logger.dump_tabular(): write the data
         # Log info about epoch
-        logger.log_tabular('Epoch', epoch)
+        logger.log_tabular('Epoch', current_epoch)
         logger.log_tabular('EpRet', with_min_and_max=True)
         logger.log_tabular('TestEpRet', with_min_and_max=True)
         logger.log_tabular('EpLen', average_only=True)
         logger.log_tabular('TestEpLen', average_only=True)
-        # TODO
-        logger.log_tabular('TotalEnvInteracts', steps_per_epoch*(current_step+1))
+        # TODO line below might not good
+        logger.log_tabular('TotalEnvInteracts', opt.steps_per_epoch*(current_epoch+1))
         logger.log_tabular('Alpha',average_only=True)
         logger.log_tabular('Q1Vals', with_min_and_max=True)
         logger.log_tabular('Q2Vals', with_min_and_max=True)
@@ -157,11 +159,6 @@ def main(_):
     np.random.seed(opt.seed)
     tf.set_random_seed(opt.seed)
 
-    # TODO not perfect
-    if FLAGS.job_name == "worker" and FLAGS.task_index == 0:
-        logger = EpochLogger(**opt.logger_kwargs)
-        logger.save_config(locals())
-
     if opt.train:
         cluster = tf.train.ClusterSpec({"ps":opt.parameter_servers, "worker":opt.workers})
         server = tf.train.Server(cluster, job_name=FLAGS.job_name, task_index=FLAGS.task_index)
@@ -173,19 +170,18 @@ def main(_):
                                                           cluster=cluster)):
 
                 is_chief = (FLAGS.task_index == 0)
-                # count the number of updates
-                global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0),
-                                              trainable=False)
-                step_op = global_step.assign(global_step+1)
-
-                # TODO remove
                 if is_chief:
-                    pass
-                    # logger = EpochLogger(**logger_kwargs)
-                    # logger.save_config(locals())
+                    logger = EpochLogger(**opt.logger_kwargs)
+                    logger.save_config(locals())
                 else:
                     logger = None
 
+                # count the number of updates
+                global_epoch = tf.get_variable('global_epoch', [], initializer=tf.constant_initializer(0),
+                                               trainable=False)
+                epoch_op = global_epoch.assign(global_epoch+1)
+
+                # --------------------------- sac1 graph part start --------------------------------
                 env, test_env = gym.make(opt.env_name), gym.make(opt.env_name)
                 obs_dim = env.observation_space.shape[0]
                 act_dim = env.action_space.shape[0]
@@ -272,8 +268,10 @@ def main(_):
                 target_init = tf.group([tf.assign(v_targ, v_main)
                                         for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
 
+                # --------------------------- sac1 graph part end --------------------------------
+
                 # TODO should have restore model feature
-                # ^--------------------------------------------------------------------------------------------
+
                 # Add ops to save and restore all the variables.
                 # saver = tf.train.Saver(max_to_keep=5)
 
@@ -308,46 +306,37 @@ def main(_):
                                               outputs={'mu': mu, 'pi': pi, 'q1': q1, 'q2': q2})
 
                     # if is_chief:
-                    #     writer = tf.summary.FileWriter(opt.summary_dir+"/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:"+str(opt.workers_num), sess.graph)
+                    #     writer = tf.summary.FileWriter(opt.summary_dir+"/" + str(datetime.datetime.now()) + "-" +
+                    #                                    opt.env_name + "-workers_num:" +
+                    #                                    str(opt.workers_num), sess.graph)
                     # else:
                     #     writer = None
 
-                    # total_steps = steps_per_epoch * epochs
                     start_time = time.time()
 
-                    # TODO max_episodes = total episodes / workers_num
+                    epochs = opt.total_epochs // FLAGS.workers_num
                     # episode should be epoch
-                    for _ in range(opt.max_episodes):
-                        '''
-                        if sv.should_stop():
-                            break
-                        '''
+                    for _ in range(epochs):
 
-                        current_step = sess.run(global_step)
-                        # TODO remove
-                        if current_step > opt.max_episodes:
-                            break
+                        current_epoch = sess.run(global_epoch)
 
                         # Train normally
-                        train(sess, env, replay_buffer, x_ph, test_env, opt.max_ep_len, logger, opt.steps_per_epoch, opt.epochs,
-                              opt.start_steps, opt.batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, opt.save_freq, is_chief,
-                              current_step, mu, pi, start_time)
-                        # train(sess, env, replay_buffer, x_ph, test_env, max_ep_len, logger, steps_per_epoch, epochs,
-                        #       start_steps, batch_size, x2_ph, a_ph, r_ph, d_ph, step_ops, save_freq, is_chief)
-                        # if current_step > 30 and reward < 0:
-                        #     break
+                        train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d_ph, step_ops,
+                              is_chief, current_epoch, mu, pi, start_time, opt)
 
                         # if current_step % opt.valid_freq == opt.valid_freq-1:
                         #     # test_r = test(sess, current_step, opt, env, actor, critic, valid_ops, valid_vars, writer)
                         #     save_model(sess, saver, opt, global_step)
 
                         # Increase global_step
-                        sess.run(step_op)
+                        sess.run(epoch_op)
 
                 print('Done')
-                killall = 'pkill -9 -f dsac1.py'
-                os.system(killall)
 
+                # TODO not perfect
+                if is_chief:
+                    killall = 'pkill -9 -f dsac1.py'
+                    os.system(killall)
     else:       # For testing
         pass
 

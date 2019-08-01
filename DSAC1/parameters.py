@@ -15,12 +15,11 @@ class Parameters:
         # Pendulum-v0
         # self.env_name = 'MountainCarContinuous-v0'
 
-        self.epochs = 500
+        self.total_epochs = 10
+
         self.alpha = 0.1
         self.ac_kwargs = dict(hidden_sizes=[400, 300])
         self.gamma = 0.99
-        self.epochs = 500
-        self.alpha = 0.1
         self.replay_size = int(1e6)
         self.lr = 1e-3
         self.polyak = 0.995
