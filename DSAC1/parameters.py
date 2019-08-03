@@ -9,6 +9,8 @@ class Parameters:
     def __init__(self, env_name, total_epochs, workers_num=1):
         # parameters set
 
+        # ray_servr_address = ""
+
         # self.env_name = 'LunarLanderContinuous-v2'   # 'MountainCarContinuous-v0'
         self.env_name = env_name
         # BipedalWalker-v2

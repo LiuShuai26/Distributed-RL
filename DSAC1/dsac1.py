@@ -210,7 +210,7 @@ def main(_):
 
                 # ray
                 # TODO redis_address
-                ray.init(redis_address="192.168.100.35:6379")
+                ray.init(redis_address="192.168.100.126:6379")
                 buffer_id_str = tf.get_variable('buffer_id_str', [], dtype=tf.string)
 
                 # --------------------------- sac1 graph part start --------------------------------

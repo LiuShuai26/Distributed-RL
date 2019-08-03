@@ -6,6 +6,7 @@ total_epochs=50
 ps_num=1
 worker_num=2
 
+ray start --head --redis-port=6379
 
 for i in `eval echo {0..$((ps_num-1))}`
 do
