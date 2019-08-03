@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/auto_run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/auto_run.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/kill_all.sh" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/kill_all.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/parameters.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,7 +17,7 @@
         <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="892">
-              <caret line="212" column="54" selection-start-line="212" selection-start-column="40" selection-end-line="212" selection-end-column="54" />
+              <caret line="212" column="62" lean-forward="true" selection-start-line="212" selection-start-column="62" selection-end-line="212" selection-end-column="62" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -60,20 +58,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="20" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="176">
+              <caret line="8" column="34" lean-forward="true" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
+            <state relative-caret-position="176">
+              <caret line="8" column="45" selection-start-line="8" selection-start-column="33" selection-end-line="8" selection-end-column="45" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -184,9 +182,9 @@
         <option value="$PROJECT_DIR$/ray1.py" />
         <option value="$PROJECT_DIR$/tf_distributed.py" />
         <option value="$PROJECT_DIR$/ray2.py" />
-        <option value="$PROJECT_DIR$/DSAC1/dsac1.py" />
         <option value="$PROJECT_DIR$/DSAC1/auto_run.sh" />
         <option value="$PROJECT_DIR$/DSAC1/kill_all.sh" />
+        <option value="$PROJECT_DIR$/DSAC1/dsac1.py" />
         <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
       </list>
     </option>
@@ -490,11 +488,19 @@
       <option name="project" value="LOCAL" />
       <updated>1564821184371</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="dsac1 version-0.6.1 shared replay buffer by ray">
+      <created>1564822302451</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1564822302451</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-4" width="2560" height="1444" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.102089085" />
@@ -530,7 +536,8 @@
     <MESSAGE value="dsac1 version-0.51 replay buffer size = 1000,000 // workers_number" />
     <MESSAGE value="dsac1 version-0.51 replay buffer size = 1000,000 // workers_number ok and clean up" />
     <MESSAGE value="dsac1 version-0.6.0 shared replay buffer by ray" />
-    <option name="LAST_COMMIT_MESSAGE" value="dsac1 version-0.6.0 shared replay buffer by ray" />
+    <MESSAGE value="dsac1 version-0.6.1 shared replay buffer by ray" />
+    <option name="LAST_COMMIT_MESSAGE" value="dsac1 version-0.6.1 shared replay buffer by ray" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/auto_run_gpu.sh">
@@ -800,7 +807,7 @@
     <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="892">
-          <caret line="212" column="54" selection-start-line="212" selection-start-column="40" selection-end-line="212" selection-end-column="54" />
+          <caret line="212" column="62" lean-forward="true" selection-start-line="212" selection-start-column="62" selection-end-line="212" selection-end-column="62" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -814,20 +821,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
+        <state relative-caret-position="176">
+          <caret line="8" column="45" selection-start-line="8" selection-start-column="33" selection-end-line="8" selection-end-column="45" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="34" lean-forward="true" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
         </state>
       </provider>
     </entry>

@@ -23,7 +23,7 @@ class Parameters:
         self.alpha = 0.1
         self.ac_kwargs = dict(hidden_sizes=[400, 300])
         self.gamma = 0.99
-        self.replay_size = 1000000//self.workers_num
+        self.replay_size = 1000000
         self.lr = 1e-3
         self.polyak = 0.995
 
