@@ -11,6 +11,9 @@ from core import mlp_actor_critic as actor_critic
 from spinup.utils.logx import EpochLogger
 from replay_buffer import ReplayBuffer
 
+import ray
+from ray.utils import (decode, binary_to_object_id, binary_to_hex, hex_to_binary)
+
 
 flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
@@ -20,6 +23,41 @@ flags.DEFINE_integer("total_epochs", 100, "total_epochs")
 flags.DEFINE_string("job_name", "", "Either 'ps' or 'worker'")
 flags.DEFINE_integer("workers_num", 1, "number of workers")
 flags.DEFINE_integer("task_index", 0, "Index of task within the job")
+
+
+@ray.remote
+class ReplayBuffer:
+    """
+    A simple FIFO experience replay buffer for SAC agents.
+    """
+
+    def __init__(self, obs_dim, act_dim, size):
+        self.obs1_buf = np.zeros([size, obs_dim], dtype=np.float32)
+        self.obs2_buf = np.zeros([size, obs_dim], dtype=np.float32)
+        self.acts_buf = np.zeros([size, act_dim], dtype=np.float32)
+        self.rews_buf = np.zeros(size, dtype=np.float32)
+        self.done_buf = np.zeros(size, dtype=np.float32)
+        self.ptr, self.size, self.max_size = 0, 0, size
+
+    def store(self, obs, act, rew, next_obs, done):
+        self.obs1_buf[self.ptr] = obs
+        self.obs2_buf[self.ptr] = next_obs
+        self.acts_buf[self.ptr] = act
+        self.rews_buf[self.ptr] = rew
+        self.done_buf[self.ptr] = done
+        self.ptr = (self.ptr + 1) % self.max_size
+        self.size = min(self.size + 1, self.max_size)
+
+    def sample_batch(self, batch_size=32):
+        idxs = np.random.randint(0, self.size, size=batch_size)
+        return dict(obs1=self.obs1_buf[idxs],
+                    obs2=self.obs2_buf[idxs],
+                    acts=self.acts_buf[idxs],
+                    rews=self.rews_buf[idxs],
+                    done=self.done_buf[idxs])
+
+    def count(self):
+        return self.size
 
 
 #   Agent Training
@@ -72,7 +110,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
         d = False if ep_len == opt.max_ep_len else d
 
         # Store experience to replay buffer
-        replay_buffer.store(o, a, r, o2, d)
+        replay_buffer.store.remote(o, a, r, o2, d)
 
         # Super critical, easy to overlook step: make sure to update
         # most recent observation!
@@ -85,16 +123,15 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
             This is a slight difference from the SAC specified in the
             original paper.
             """
-            # why ep_len times update?
             for j in range(ep_len):
-                batch = replay_buffer.sample_batch(opt.batch_size)
+                batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
                 feed_dict = {x_ph: batch['obs1'],
                              x2_ph: batch['obs2'],
                              a_ph: batch['acts'],
                              r_ph: batch['rews'],
                              d_ph: batch['done'],
                              }
-                # step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, alpha, train_pi_op, train_value_op, target_update]
+
                 outs = sess.run(step_ops, feed_dict)
                 if is_chief:
                     logger.store(LossPi=outs[0], LossQ1=outs[1], LossQ2=outs[2],
@@ -155,6 +192,7 @@ def main(_):
         if FLAGS.job_name == "ps":
             server.join()
         elif FLAGS.job_name == "worker":
+            # Variable is placed in the parameter server by the replica_device_setter
             with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index,
                                                           cluster=cluster)):
 
@@ -169,6 +207,11 @@ def main(_):
                 global_epoch = tf.get_variable('global_epoch', [], initializer=tf.constant_initializer(0),
                                                trainable=False)
                 epoch_op = global_epoch.assign(global_epoch+1)
+
+                # ray
+                # TODO redis_address
+                ray.init(redis_address="192.168.100.35:6379")
+                buffer_id_str = tf.get_variable('buffer_id_str', [], dtype=tf.string)
 
                 # --------------------------- sac1 graph part start --------------------------------
                 env, test_env = gym.make(opt.env_name), gym.make(opt.env_name)
@@ -191,9 +234,6 @@ def main(_):
                 # Target value network
                 with tf.variable_scope('target'):
                     _, _, logp_pi_, _, _, _, q1_pi_, q2_pi_ = actor_critic(x2_ph, x2_ph, a_ph, **opt.ac_kwargs)
-
-                # Experience buffer
-                replay_buffer = ReplayBuffer(obs_dim=obs_dim, act_dim=act_dim, size=opt.replay_size)
 
                 # Count variables
                 var_counts = tuple(core.count_vars(scope) for scope in
@@ -289,6 +329,17 @@ def main(_):
                 with tf.Session(server.target) as sess:
                     sess.run(tf.global_variables_initializer())
                     sess.run(target_init)
+                    if is_chief == 0:
+                        # Experience buffer
+                        replay_buffer = ReplayBuffer.remote(obs_dim=obs_dim, act_dim=act_dim, size=opt.replay_size)
+                        buffer_id = ray.put(replay_buffer)
+                        buffer_id_op = buffer_id_str.assign(str(buffer_id)[9:-1])
+                        sess.run(buffer_id_op)
+                    else:
+                        # wait chief put buffer in ray
+                        time.sleep(1)
+                        buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
+                        replay_buffer = ray.get(buffer_id)
 
                     if is_chief:
                         # Setup model saving
@@ -325,8 +376,10 @@ def main(_):
 
                 # TODO might not work well
                 if is_chief:
-                    killall = 'pkill -9 -f dsac1.py'
-                    os.system(killall)
+                    # kill_all = 'pkill -9 -f dsac1.py'
+                    kill_all = './kill_all.sh'
+                    os.system(kill_all)
+
     else:       # For testing
         pass
 

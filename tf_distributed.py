@@ -2,11 +2,55 @@ import argparse
 import sys
 
 import tensorflow as tf
+import numpy as np
 import time
 
 from DDDPG.replay_buffer import ReplayBuffer
 
 FLAGS = None
+
+import ray
+from ray.utils import (decode, binary_to_object_id, binary_to_hex,
+                       hex_to_binary)
+
+
+@ray.remote
+class ReplayBuffer:
+    """
+    A simple FIFO experience replay buffer for SAC agents.
+    """
+
+    def __init__(self, obs_dim, act_dim, size):
+        self.obs1_buf = np.zeros([size, obs_dim], dtype=np.float32)
+        self.obs2_buf = np.zeros([size, obs_dim], dtype=np.float32)
+        self.acts_buf = np.zeros([size, act_dim], dtype=np.float32)
+        self.rews_buf = np.zeros(size, dtype=np.float32)
+        self.done_buf = np.zeros(size, dtype=np.float32)
+        self.ptr, self.size, self.max_size = 0, 0, size
+
+    def store(self, obs, act, rew, next_obs, done):
+        self.obs1_buf[self.ptr] = obs
+        self.obs2_buf[self.ptr] = next_obs
+        self.acts_buf[self.ptr] = act
+        self.rews_buf[self.ptr] = rew
+        self.done_buf[self.ptr] = done
+        self.ptr = (self.ptr + 1) % self.max_size
+        self.size = min(self.size + 1, self.max_size)
+
+    def sample_batch(self, batch_size=32):
+        idxs = np.random.randint(0, self.size, size=batch_size)
+        return dict(obs1=self.obs1_buf[idxs],
+                    obs2=self.obs2_buf[idxs],
+                    acts=self.acts_buf[idxs],
+                    rews=self.rews_buf[idxs],
+                    done=self.done_buf[idxs])
+
+    def count(self):
+        return self.size
+
+# if FLAGS.job_name == "ps":
+#     buffer = ReplayBuffer.remote(3, 3, 10)
+#     buffer_id = ray.put(buffer)
 
 
 def main(_):
@@ -26,46 +70,47 @@ def main(_):
         with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index,
                                                       cluster=cluster)):
             # global_step = tf.contrib.framework.get_or_create_global_step()
-            global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
-            varstep = tf.Variable(5.)
-            varstep_op = tf.assign_add(varstep, 1)
+            global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(5), trainable=False)
+            tfid = tf.get_variable('tfid', [], dtype=tf.string)
+
             step_op = global_step.assign(global_step + 1)
+
             init_op = tf.global_variables_initializer()
 
-            replay_buffer = ReplayBuffer(100, 0)
+            ray.init(redis_address="192.168.100.35:6379")
 
         with tf.Session(server.target) as sess:
+
             sess.run(init_op)
+
+            if FLAGS.task_index == 0:
+                buffer = ReplayBuffer.remote(3, 3, 100)
+                buffer_id = ray.put(buffer)
+                buffer_str = str(buffer_id)
+                id_op = tfid.assign(buffer_str[9:-1])
+                sess.run(id_op)
+            else:
+                time.sleep(1)
+                buffer_oid = sess.run(tfid)
+                print(buffer_oid)
+                object_id = ray.ObjectID(hex_to_binary(buffer_oid))
+                buffer = ray.get(object_id)
+                print(buffer)
             for _ in range(10):
-                s, a, r, t, s2 = 1, 2, 3, 4, 5
                 time.sleep(1)
                 if FLAGS.task_index == 0:
-                    print(server.target)
-                    replay_buffer.add(s, a, r, t, s2)
+                    obs, act, rew, next_obs, done = np.ones((3)), np.ones((3)), 3, np.ones((3)), 1
+                    buffer.store.remote(obs, act, rew, next_obs, done)
                     sess.run(step_op)
-                    sess.run(varstep_op)
+                    # print(ray.get(buffer.count.remote()))
                 else:
-                    # replay_buffer.add(s, a, r, t, s2)
-                    print(replay_buffer.count)
-                    # print(sess.run(global_step))
-                    print(sess.run(varstep))
-
-        # # The StopAtStepHook handles stopping after running given steps.
-        # hooks = [tf.train.StopAtStepHook(last_step=1000000)]
-        #
-        # # The MonitoredTrainingSession takes care of session initialization,
-        # # restoring from a checkpoint, saving to a checkpoint, and closing when done
-        # # or an error occurs.
-        # with tf.train.MonitoredTrainingSession(master=server.target,
-        #                                        is_chief=(FLAGS.task_index == 0),
-        #                                        checkpoint_dir="/tmp/train_logs",
-        #                                        hooks=hooks) as mon_sess:
-        #     while not mon_sess.should_stop():
-        #         # Run a training step asynchronously.
-        #         # See `tf.train.SyncReplicasOptimizer` for additional details on how to
-        #         # perform *synchronous* training.
-        #         # mon_sess.run handles AbortedError in case of preempted PS.
-        #         mon_sess.run(step_op)
+                    print(sess.run(global_step))
+                    # print(ray.get(buffer.count.remote()))
+                    obs, act, rew, next_obs, done = np.ones((3)), np.ones((3)), 3, np.ones((3)), 1
+                    buffer.store.remote(obs, act, rew, next_obs, done)
+                    if ray.get(buffer.count.remote()) > 5:
+                        print(ray.get(buffer.sample_batch.remote(5)))
+                    print(ray.get(buffer.count.remote()))
 
 
 if __name__ == "__main__":
