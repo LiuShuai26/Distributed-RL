@@ -12,7 +12,7 @@ from spinup.utils.logx import EpochLogger
 from replay_buffer import ReplayBuffer
 
 import ray
-from ray.utils import (decode, binary_to_object_id, binary_to_hex, hex_to_binary)
+from ray.utils import hex_to_binary
 
 
 flags = tf.app.flags
@@ -186,7 +186,7 @@ def main(_):
     tf.set_random_seed(opt.seed)
 
     if opt.train:
-        cluster = tf.train.ClusterSpec({"ps":opt.parameter_servers, "worker":opt.workers})
+        cluster = tf.train.ClusterSpec({"ps": opt.parameter_servers, "worker": opt.workers})
         server = tf.train.Server(cluster, job_name=FLAGS.job_name, task_index=FLAGS.task_index)
 
         if FLAGS.job_name == "ps":
@@ -327,9 +327,10 @@ def main(_):
                 #         print('***********************')
 
                 with tf.Session(server.target) as sess:
+                    # if i
                     sess.run(tf.global_variables_initializer())
                     sess.run(target_init)
-                    if is_chief == 0:
+                    if is_chief:
                         # Experience buffer
                         replay_buffer = ReplayBuffer.remote(obs_dim=obs_dim, act_dim=act_dim, size=opt.replay_size)
                         buffer_id = ray.put(replay_buffer)
