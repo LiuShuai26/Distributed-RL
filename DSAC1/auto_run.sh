@@ -2,9 +2,10 @@
 
 
 env_name="LunarLanderContinuous-v2"
+#env_name="Pendulum-v0"
 total_epochs=50
 ps_num=1
-worker_num=2
+worker_num=4
 
 ray start --head --redis-port=6379
 

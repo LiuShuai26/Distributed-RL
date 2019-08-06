@@ -68,7 +68,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
         act_op = mu if deterministic else pi
         return sess.run(act_op, feed_dict={x_ph: o.reshape(1, -1)})[0]
 
-    def test_agent(n=10):
+    def test_agent(n=25):
         global sess, mu, pi, q1, q2, q1_pi, q2_pi
         for j in range(n):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
@@ -110,7 +110,10 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
         d = False if ep_len == opt.max_ep_len else d
 
         # Store experience to replay buffer
-        replay_buffer.store.remote(o, a, r, o2, d)
+        try:
+            replay_buffer.store.remote(o, a, r, o2, d)
+        except:
+            print("store error")
 
         # Super critical, easy to overlook step: make sure to update
         # most recent observation!
@@ -123,8 +126,14 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
             This is a slight difference from the SAC specified in the
             original paper.
             """
+
             for j in range(ep_len):
-                batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
+                try:
+                    batch_id = replay_buffer.sample_batch.remote(opt.batch_size)
+                    batch = ray.get(batch_id)
+                except:
+                    print("sample error")
+                    continue
                 feed_dict = {x_ph: batch['obs1'],
                              x2_ph: batch['obs2'],
                              a_ph: batch['acts'],
@@ -210,7 +219,7 @@ def main(_):
 
                 # ray
                 # TODO redis_address
-                ray.init(redis_address="192.168.100.126:6379")
+                ray.init(redis_address="192.168.100.35:6379")
                 buffer_id_str = tf.get_variable('buffer_id_str', [], dtype=tf.string)
 
                 # --------------------------- sac1 graph part start --------------------------------
@@ -335,9 +344,16 @@ def main(_):
                         buffer_id = ray.put(replay_buffer)
                         buffer_id_op = buffer_id_str.assign(str(buffer_id)[9:-1])
                         sess.run(buffer_id_op)
+
                     else:
+                        # TODO sleep 1 second might not enough
                         # wait chief put buffer in ray
-                        time.sleep(1)
+                        time.sleep(FLAGS.task_index * 3)
+                        buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
+                        replay_buffer = ray.get(buffer_id)
+                        buffer_id = ray.put(replay_buffer)
+                        buffer_id_op = buffer_id_str.assign(str(buffer_id)[9:-1])
+                        sess.run(buffer_id_op)
                         buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
                         replay_buffer = ray.get(buffer_id)
 
@@ -360,6 +376,10 @@ def main(_):
                     for _ in range(epochs):
 
                         current_epoch = sess.run(global_epoch)
+                        try:
+                            print(current_epoch, ray.get(replay_buffer.count.remote()))
+                        except:
+                            print("a o")
 
                         # Train normally
                         train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d_ph, step_ops,
