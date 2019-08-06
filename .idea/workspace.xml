@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
+    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="Revert &quot;dsac1 version-0.6.1 shared replay buffer by ray&quot;&#10;&#10;This reverts commit 488c9f2e">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/dsac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/dsac1.py" afterDir="false" />
     </list>
@@ -16,11 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="194" column="85" lean-forward="true" selection-start-line="194" selection-start-column="85" selection-end-line="194" selection-end-column="85" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="282">
+              <caret line="14" selection-start-line="14" selection-end-line="14" />
             </state>
           </provider>
         </entry>
@@ -123,6 +120,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
+      <find>ep_ret</find>
+      <find>step_op</find>
       <find>log_tabular</find>
       <find>batch_size</find>
       <find>max_ep_len</find>
@@ -151,8 +150,6 @@
       <find>repla</find>
       <find>get_object</find>
       <find>replay_buffer</find>
-      <find>step_ops</find>
-      <find>is_chief</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -184,23 +181,21 @@
         <option value="$PROJECT_DIR$/ray2.py" />
         <option value="$PROJECT_DIR$/DSAC1/auto_run.sh" />
         <option value="$PROJECT_DIR$/DSAC1/kill_all.sh" />
-        <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
         <option value="$PROJECT_DIR$/DSAC1/dsac1.py" />
+        <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1" />
     <option name="y" value="-4" />
-    <option name="width" value="2562" />
-    <option name="height" value="1445" />
+    <option name="width" value="2560" />
+    <option name="height" value="1444" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -217,6 +212,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -496,17 +492,23 @@
       <option name="project" value="LOCAL" />
       <updated>1564822302451</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="dsac1 version-0.6.1 shared replay buffer by ray">
+      <created>1565079351865</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1565079351865</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="2562" height="1445" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.102089085" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.102089085" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.49980292" visible="true" weight="0.2453393" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="0" sideWeight="0.49980292" visible="true" weight="0.24981357" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5001971" side_tool="true" weight="0.32960477" />
       <window_info anchor="bottom" id="Python Console" order="2" weight="0.32960477" />
       <window_info anchor="bottom" id="Message" order="3" />
@@ -658,6 +660,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6974">
+          <caret line="324" column="70" selection-start-line="324" selection-start-column="57" selection-end-line="324" selection-end-column="70" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/tf_replay_buffer.py" />
     <entry file="file://$PROJECT_DIR$/../.conda/envs/spinningup/lib/python3.6/site-packages/ray/worker.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -666,10 +678,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/kill_all.sh">
+    <entry file="file://$PROJECT_DIR$/DSAC1/replay_buffer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="2" column="8" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
+        <state relative-caret-position="286">
+          <caret line="13" column="56" selection-start-line="13" selection-start-column="56" selection-end-line="13" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -679,6 +691,16 @@
           <caret line="71" selection-start-line="71" selection-end-line="71" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tf_distributed.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2332">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -693,37 +715,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
+    <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6974">
-          <caret line="324" column="70" selection-start-line="324" selection-start-column="57" selection-end-line="324" selection-end-column="70" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="282">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/replay_buffer.py">
+    <entry file="file://$PROJECT_DIR$/DSAC1/kill_all.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="13" column="56" selection-start-line="13" selection-start-column="56" selection-end-line="13" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tf_distributed.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2332">
-          <caret line="113" selection-start-line="113" selection-end-line="113" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="34" />
+        <state relative-caret-position="44">
+          <caret line="2" column="8" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -737,13 +739,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
+    <entry file="file://$PROJECT_DIR$/DSAC1/auto_run.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="194" column="85" lean-forward="true" selection-start-line="194" selection-start-column="85" selection-end-line="194" selection-end-column="85" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="176">
+          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="34" />
         </state>
       </provider>
     </entry>

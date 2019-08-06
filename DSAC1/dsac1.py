@@ -327,7 +327,6 @@ def main(_):
                 #         print('***********************')
 
                 with tf.Session(server.target) as sess:
-                    # if i
                     sess.run(tf.global_variables_initializer())
                     sess.run(target_init)
                     if is_chief:
