@@ -110,10 +110,7 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
         d = False if ep_len == opt.max_ep_len else d
 
         # Store experience to replay buffer
-        try:
-            replay_buffer.store.remote(o, a, r, o2, d)
-        except:
-            print("store error")
+        replay_buffer.store.remote(o, a, r, o2, d)
 
         # Super critical, easy to overlook step: make sure to update
         # most recent observation!
@@ -128,12 +125,9 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
             """
 
             for j in range(ep_len):
-                try:
-                    batch_id = replay_buffer.sample_batch.remote(opt.batch_size)
-                    batch = ray.get(batch_id)
-                except:
-                    print("sample error")
-                    continue
+                batch_id = replay_buffer.sample_batch.remote(opt.batch_size)
+                batch = ray.get(batch_id)
+
                 feed_dict = {x_ph: batch['obs1'],
                              x2_ph: batch['obs2'],
                              a_ph: batch['acts'],
@@ -348,13 +342,13 @@ def main(_):
                     else:
                         # TODO sleep 1 second might not enough
                         # wait chief put buffer in ray
-                        time.sleep(FLAGS.task_index * 3)
+                        time.sleep(FLAGS.task_index * 5)
                         buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
                         replay_buffer = ray.get(buffer_id)
                         buffer_id = ray.put(replay_buffer)
                         buffer_id_op = buffer_id_str.assign(str(buffer_id)[9:-1])
                         sess.run(buffer_id_op)
-                        buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
+                        # buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
                         replay_buffer = ray.get(buffer_id)
 
                     if is_chief:
@@ -376,10 +370,8 @@ def main(_):
                     for _ in range(epochs):
 
                         current_epoch = sess.run(global_epoch)
-                        try:
-                            print(current_epoch, ray.get(replay_buffer.count.remote()))
-                        except:
-                            print("a o")
+
+                        print(FLAGS.task_index, current_epoch, ray.get(replay_buffer.count.remote()))
 
                         # Train normally
                         train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d_ph, step_ops,
