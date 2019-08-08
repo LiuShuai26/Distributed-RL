@@ -145,6 +145,7 @@ def worker_task(ps, replay_buffer, opt, worker_index):
             weights = ray.get(ps.pull.remote(keys))
             net.set_weights(keys, weights)
             print("ep_ret: ", ep_ret)
+            o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
 
 if __name__ == '__main__':
