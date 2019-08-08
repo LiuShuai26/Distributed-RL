@@ -167,7 +167,7 @@ if __name__ == '__main__':
         weights = ray.get(ps.pull.remote(all_keys))
         net.set_weights(all_keys, weights)
 
-        ep_ret = net.test_agent(start_time)
+        ep_ret = net.test_agent(start_time, replay_buffer)
         sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
         print("test_reward:", ep_ret, "sample_times:", sample_times, "steps:", steps, "buffer_size:", size)
         if steps >= opt.total_epochs * opt.steps_per_epoch:

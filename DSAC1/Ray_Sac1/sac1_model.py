@@ -106,10 +106,17 @@ class Sac1(object):
             # Initializing targets to match main variables
             self.target_init = tf.group([tf.assign(v_targ, v_main)
                                       for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
-            self.sess = tf.Session(
-                config=tf.ConfigProto(
-                    intra_op_parallelism_threads=1,
-                    inter_op_parallelism_threads=1))
+            if job == 'learner':
+                self.sess = tf.Session(
+                    config=tf.ConfigProto(
+                        intra_op_parallelism_threads=1,
+                        inter_op_parallelism_threads=1))
+            else:
+                self.sess = tf.Session(
+                    config=tf.ConfigProto(
+                        device_count={'GPU': 0},
+                        intra_op_parallelism_threads=1,
+                        inter_op_parallelism_threads=1))
             self.sess.run(tf.global_variables_initializer())
 
             if job == "main":
@@ -151,7 +158,7 @@ class Sac1(object):
                      }
         self.sess.run(self.step_ops, feed_dict)
 
-    def test_agent(self, start_time, n=25):
+    def test_agent(self, start_time, replay_buffer, n=25):
         test_env = gym.make(self.opt.env_name)
         rew = []
         for j in range(n):
@@ -162,8 +169,11 @@ class Sac1(object):
                 ep_ret += r
                 ep_len += 1
             rew.append(ep_ret)
+
+        sample_times, _, _ = ray.get(replay_buffer.get_counts.remote())
         summary_str = self.sess.run(self.test_ops, feed_dict={
-            self.test_vars[0]: sum(rew)/25
+            self.test_vars[0]: sum(rew)/25,
+            self.test_vars[1]: sample_times
         })
         current_time = time.time()
         self.writer.add_summary(summary_str, current_time-start_time)
@@ -174,9 +184,11 @@ class Sac1(object):
     def build_summaries(self):
         test_summaries = []
         episode_reward = tf.Variable(0.)
+        sample_times = tf.Variable(0.)
         test_summaries.append(tf.summary.scalar("Reward", episode_reward))
+        test_summaries.append(tf.summary.scalar("Sample_times", sample_times))
 
         test_ops = tf.summary.merge(test_summaries)
-        test_vars = [episode_reward]
+        test_vars = [episode_reward, sample_times]
 
         return test_ops, test_vars

@@ -4,6 +4,7 @@ import sys
 import gym
 import datetime
 
+
 class ParametersSac1:
     def __init__(self, env_name, total_epochs, num_workers=1):
         # parameters set
