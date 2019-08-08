@@ -148,6 +148,7 @@ class Sac1(object):
 
     def test_agent(self, n=25):
         test_env = gym.make(self.opt.env_name)
+        rew = []
         for j in range(n):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
             while not(d or (ep_len == self.opt.max_ep_len)):
@@ -155,8 +156,8 @@ class Sac1(object):
                 o, r, d, _ = test_env.step(self.get_action(o, True))
                 ep_ret += r
                 ep_len += 1
-
-            return ep_ret/25, ep_len
+            rew.append(ep_ret)
+        return sum(rew)/25
 
 
 # sess = tf.Session()

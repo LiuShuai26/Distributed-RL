@@ -96,6 +96,7 @@ def learner_task(ps, replay_buffer, opt, learner_index):
               "LogPi=", outs[5], "Alpha=", outs[6])
         keys, values = net.get_weights()
         ps.push.remote(keys, values)
+        time.sleep(3)
 
 
 @ray.remote
@@ -162,15 +163,15 @@ if __name__ == '__main__':
     # Start some training tasks.
     worker_tasks = [worker_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
 
-    time.sleep(5)
+    time.sleep(10)
 
     learner_task = [learner_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
     while True:
         weights = ray.get(ps.pull.remote(all_keys))
         net.set_weights(all_keys, weights)
-        ep_ret, ep_len = net.test_agent()
-        print(ep_ret, ep_len)
+        ep_ret = net.test_agent()
+        print(ep_ret)
         time.sleep(5)
     # Keep the main process running! Otherwise everything will shut down when main process finished.
     time.sleep(100)
