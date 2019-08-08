@@ -90,12 +90,12 @@ def train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d
         from a uniform distribution for better exploration. Afterwards, 
         use the learned policy. 
         """
-
-        # get action by policy after first "two" epochs
-        if current_epoch > 1:
-            a = get_action(o)
-        else:
+        # TODO
+        # get action by policy after "first" 10000 steps
+        if FLAGS.task_index <= 1 and current_epoch == 0:
             a = env.action_space.sample()
+        else:
+            a = get_action(o)
 
         # Step the env
         # env.render()
@@ -340,7 +340,7 @@ def main(_):
                         sess.run(buffer_id_op)
 
                     else:
-                        # TODO sleep 1 second might not enough
+                        # TODO 5s is too long
                         # wait chief put buffer in ray
                         time.sleep(FLAGS.task_index * 5)
                         buffer_id = ray.ObjectID(hex_to_binary(sess.run(buffer_id_str)))
@@ -371,8 +371,9 @@ def main(_):
 
                         current_epoch = sess.run(global_epoch)
 
-                        print(FLAGS.task_index, current_epoch, ray.get(replay_buffer.count.remote()))
+                        print(FLAGS.task_index, current_epoch, replay_buffer, ray.get(replay_buffer.count.remote()))
 
+                        # TODO epoch 0 multiple times at the beginning
                         # Train normally
                         train(sess, env, replay_buffer, x_ph, test_env, logger, x2_ph, a_ph, r_ph, d_ph, step_ops,
                               is_chief, current_epoch, mu, pi, start_time, opt)
