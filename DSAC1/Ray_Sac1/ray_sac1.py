@@ -30,6 +30,7 @@ class ReplayBuffer:
         self.rews_buf = np.zeros(size, dtype=np.float32)
         self.done_buf = np.zeros(size, dtype=np.float32)
         self.ptr, self.size, self.max_size = 0, 0, size
+        self.steps, self.sample_times = 0
 
     def store(self, obs, act, rew, next_obs, done):
         self.obs1_buf[self.ptr] = obs
@@ -39,17 +40,19 @@ class ReplayBuffer:
         self.done_buf[self.ptr] = done
         self.ptr = (self.ptr+1) % self.max_size
         self.size = min(self.size+1, self.max_size)
+        self.steps += 1
 
     def sample_batch(self, batch_size=32):
         idxs = np.random.randint(0, self.size, size=batch_size)
+        self.sample_times += 1
         return dict(obs1=self.obs1_buf[idxs],
                     obs2=self.obs2_buf[idxs],
                     acts=self.acts_buf[idxs],
                     rews=self.rews_buf[idxs],
                     done=self.done_buf[idxs])
 
-    def count(self):
-        return self.size
+    def get_counts(self):
+        return self.sample_times, self.steps, self.size
 
 
 @ray.remote
@@ -165,5 +168,6 @@ if __name__ == '__main__':
         net.set_weights(all_keys, weights)
 
         ep_ret = net.test_agent(start_time)
-        print(ep_ret)
+        sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
+        print(ep_ret, sample_times, steps, size)
         time.sleep(5)
