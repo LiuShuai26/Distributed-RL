@@ -71,6 +71,7 @@ class ParameterServer(object):
     #         self.weights[key] += value
 
     def push(self, keys, values):
+        values = [value.copy() for value in values]
         for key, value in zip(keys, values):
             self.weights[key] = value
 
@@ -87,7 +88,7 @@ def learner_task(ps, replay_buffer, opt, learner_index):
     net.set_weights(keys, weights)
 
     while True:
-
+        print(ray.get(replay_buffer.count.remote()))
         batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
         net.parameter_update(batch)
         keys, values = net.get_weights()

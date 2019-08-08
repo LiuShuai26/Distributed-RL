@@ -90,10 +90,12 @@ def apply_squashing_func(mu, pi, logp_pi):
 # Actor-Critics
 def mlp_actor_critic(x, x2, a, hidden_sizes=(400,300), activation=tf.nn.relu,
                      output_activation=None, policy=mlp_gaussian_policy, action_space=None):
+
     # policy
     with tf.variable_scope('pi'):
         mu, pi, logp_pi = policy(x, a, hidden_sizes, activation, output_activation)
         mu, pi, logp_pi = apply_squashing_func(mu, pi, logp_pi)
+
     with tf.variable_scope('pi', reuse=True):
         mu2, pi2, logp_pi2 = policy(x2, a, hidden_sizes, activation, output_activation)
         mu2, pi2, logp_pi2 = apply_squashing_func(mu2, pi2, logp_pi2)
@@ -106,6 +108,7 @@ def mlp_actor_critic(x, x2, a, hidden_sizes=(400,300), activation=tf.nn.relu,
     # vfs
     # tf.squeeze( shape(?,1), axis=1 ) = shape(?,)
     vf_mlp = lambda x : tf.squeeze(mlp(x, list(hidden_sizes)+[1], activation, None), axis=1)
+
     with tf.variable_scope('q1'):
         q1 = vf_mlp(tf.concat([x,a], axis=-1))
     with tf.variable_scope('q1', reuse=True):
