@@ -107,7 +107,7 @@ class Sac1(object):
                     intra_op_parallelism_threads=1,
                     inter_op_parallelism_threads=1))
             self.sess.run(tf.global_variables_initializer())
-            self.sess.run(self.target_init)
+            # self.sess.run(self.target_init)
             # Helper values.
 
             self.variables = ray.experimental.tf_utils.TensorFlowVariables(
@@ -122,12 +122,12 @@ class Sac1(object):
     def get_weights(self):
         weights = self.variables.get_weights()
         keys = [key for key in list(weights.keys()) if "main" in key]
-        values = [weights[key] for key in list(weights.keys()) if "main" in key]
+        values = [weights[key] for key in keys]
         return keys, values
 
     def get_action(self, o, deterministic=False):
         act_op = self.mu if deterministic else self.pi
-        return self.sess.run(act_op, feed_dict={self.x_ph: o.reshape(1,-1)})[0]
+        return self.sess.run(act_op, feed_dict={self.x_ph: o.reshape(1, -1)})[0]
 
     def compute_gradients(self, x, y):
         pass
@@ -144,6 +144,7 @@ class Sac1(object):
                      }
         # step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, alpha, train_pi_op, train_value_op, target_update]
         outs = self.sess.run(self.step_ops, feed_dict)
+        return outs
 
     def test_agent(self, n=25):
         test_env = gym.make(self.opt.env_name)
@@ -154,10 +155,10 @@ class Sac1(object):
                 o, r, d, _ = test_env.step(self.get_action(o, True))
                 ep_ret += r
                 ep_len += 1
-            # logger.store(TestEpRet=ep_ret, TestEpLen=ep_len)
-            return ep_ret, ep_len
 
-# eeeeeeeeeeeeeeee
+            return ep_ret/25, ep_len
+
+
 # sess = tf.Session()
 # sess.run(tf.global_variables_initializer())
 #
@@ -171,5 +172,3 @@ class Sac1(object):
 # # print([weights[key] for key in list(weights.keys()) if "main" in key])
 # exit(886)
 # time.sleep(100)
-
-# eeeeeeeeeeeeeeee

@@ -12,6 +12,7 @@ import gym
 import datetime
 from spinup.utils.run_utils import setup_logger_kwargs
 import model
+from spinup.utils.logx import EpochLogger
 
 
 flags = tf.app.flags
@@ -88,12 +89,13 @@ def learner_task(ps, replay_buffer, opt, learner_index):
     net.set_weights(keys, weights)
 
     while True:
-        print(ray.get(replay_buffer.count.remote()))
+        # print(ray.get(replay_buffer.count.remote()))
         batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
-        net.parameter_update(batch)
+        outs = net.parameter_update(batch)
+        print("LossPi=", outs[0], "LossQ1=", outs[1], "LossQ2=", outs[2], "Q1Vals=", outs[3], "Q2Vals=", outs[4],
+              "LogPi=", outs[5], "Alpha=", outs[6])
         keys, values = net.get_weights()
         ps.push.remote(keys, values)
-        time.sleep(5)
 
 
 @ray.remote
