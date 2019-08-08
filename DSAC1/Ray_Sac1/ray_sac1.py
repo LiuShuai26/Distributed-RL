@@ -30,7 +30,7 @@ class ReplayBuffer:
         self.rews_buf = np.zeros(size, dtype=np.float32)
         self.done_buf = np.zeros(size, dtype=np.float32)
         self.ptr, self.size, self.max_size = 0, 0, size
-        self.steps, self.sample_times = 0
+        self.steps, self.sample_times = 0, 0
 
     def store(self, obs, act, rew, next_obs, done):
         self.obs1_buf[self.ptr] = obs
@@ -169,5 +169,5 @@ if __name__ == '__main__':
 
         ep_ret = net.test_agent(start_time)
         sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
-        print(ep_ret, sample_times, steps, size)
+        print("test reward: ", ep_ret, "sample_times: ", sample_times, "steps: ", steps, "buffer size: ", size)
         time.sleep(5)
