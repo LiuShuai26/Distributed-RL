@@ -6,6 +6,8 @@ import numpy as np
 import tensorflow as tf
 from numbers import Number
 import gym
+import datetime
+import time
 
 import core
 from core import get_vars
@@ -16,7 +18,7 @@ import ray.experimental.tf_utils
 
 
 class Sac1(object):
-    def __init__(self, opt):
+    def __init__(self, opt, job):
         self.opt = opt
         with tf.Graph().as_default():
             tf.set_random_seed(opt.seed)
@@ -99,6 +101,9 @@ class Sac1(object):
                 self.step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, opt.alpha,
                         train_pi_op, train_value_op, self.target_update, train_alpha_op]
 
+            # Set up summary Ops
+            self.test_ops, self.test_vars = self.build_summaries()
+
             # Initializing targets to match main variables
             self.target_init = tf.group([tf.assign(v_targ, v_main)
                                       for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
@@ -108,7 +113,10 @@ class Sac1(object):
                     inter_op_parallelism_threads=1))
             self.sess.run(tf.global_variables_initializer())
             # self.sess.run(self.target_init)
-            # Helper values.
+            if job == "main":
+                self.writer = tf.summary.FileWriter(
+                    opt.summary_dir + "/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:" + str(
+                        opt.num_workers), self.sess.graph)
 
             self.variables = ray.experimental.tf_utils.TensorFlowVariables(
                 self.value_loss, self.sess)
@@ -146,7 +154,7 @@ class Sac1(object):
         outs = self.sess.run(self.step_ops, feed_dict)
         return outs
 
-    def test_agent(self, n=25):
+    def test_agent(self, start_time, n=25):
         test_env = gym.make(self.opt.env_name)
         rew = []
         for j in range(n):
@@ -157,8 +165,25 @@ class Sac1(object):
                 ep_ret += r
                 ep_len += 1
             rew.append(ep_ret)
+        summary_str = self.sess.run(self.test_ops, feed_dict={
+            self.test_vars[0]: sum(rew)/25
+        })
+        current_time = time.time()
+        self.writer.add_summary(summary_str, current_time-start_time)
+        self.writer.flush()
         return sum(rew)/25
 
+    # Tensorflow Summary Ops
+    def build_summaries(self):
+        test_summaries = []
+        episode_reward = tf.Variable(0.)
+        test_summaries.append(tf.summary.scalar("Reward", episode_reward))
+
+        test_ops = tf.summary.merge(test_summaries)
+
+        test_vars = [episode_reward]
+
+        return test_ops, test_vars
 
 # sess = tf.Session()
 # sess.run(tf.global_variables_initializer())

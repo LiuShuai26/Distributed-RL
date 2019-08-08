@@ -56,8 +56,8 @@ class ParametersSac1:
 
         self.logger_kwargs = setup_logger_kwargs(exp_name, self.seed)
 
-        self.summary_dir = './tboard_ddpg'  # Directory for storing tensorboard summary results
-        self.save_dir = './model_ddpg'      # Directory for storing trained model
+        self.summary_dir = './tboard_ray_sac1'  # Directory for storing tensorboard summary results
+        self.save_dir = './model_ray_sac1'      # Directory for storing trained model
 
         self.parameter_servers = ["localhost:2222"]
         self.workers = []

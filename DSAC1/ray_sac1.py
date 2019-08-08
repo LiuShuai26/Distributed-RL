@@ -83,7 +83,7 @@ class ParameterServer(object):
 @ray.remote
 def learner_task(ps, replay_buffer, opt, learner_index):
 
-    net = sac1_model.Sac1(opt)
+    net = sac1_model.Sac1(opt, job="learner")
     keys = net.get_weights()[0]
     weights = ray.get(ps.pull.remote(keys))
     net.set_weights(keys, weights)
@@ -103,7 +103,7 @@ def worker_task(ps, replay_buffer, opt, worker_index):
 
     env = gym.make(opt.env_name)
 
-    net = sac1_model.Sac1(opt)
+    net = sac1_model.Sac1(opt, job="worker")
     keys = net.get_weights()[0]
 
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
@@ -144,7 +144,7 @@ def worker_task(ps, replay_buffer, opt, worker_index):
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             net.set_weights(keys, weights)
-            print("ep_ret: ", ep_ret)
+            # print("ep_ret: ", ep_ret)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
 
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     opt = ParametersSac1(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers)
 
     # Create a parameter server with some random weights.
-    net = sac1_model.Sac1(opt)
+    net = sac1_model.Sac1(opt, job="main")
 
     all_keys, all_values = net.get_weights()
     ps = ParameterServer.remote(all_keys, all_values)
@@ -166,13 +166,14 @@ if __name__ == '__main__':
 
     time.sleep(10)
 
+    start_time = time.time()
     learner_task = [learner_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
+    # Keep the main process running! Otherwise everything will shut down when main process finished.
     while True:
         weights = ray.get(ps.pull.remote(all_keys))
         net.set_weights(all_keys, weights)
-        ep_ret = net.test_agent()
+
+        ep_ret = net.test_agent(start_time)
         print(ep_ret)
         time.sleep(5)
-    # Keep the main process running! Otherwise everything will shut down when main process finished.
-    time.sleep(100)
