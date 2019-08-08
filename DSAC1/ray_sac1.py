@@ -17,7 +17,7 @@ import model
 flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 
-flags.DEFINE_string("env_name", "LunarLanderContinuous-v2", "game env")
+flags.DEFINE_string("env_name", "Pendulum-v0", "game env")
 flags.DEFINE_integer("total_epochs", 100, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
@@ -66,9 +66,13 @@ class ParameterServer(object):
         values = [value.copy() for value in values]
         self.weights = dict(zip(keys, values))
 
+    # def push(self, keys, values):
+    #     for key, value in zip(keys, values):
+    #         self.weights[key] += value
+
     def push(self, keys, values):
         for key, value in zip(keys, values):
-            self.weights[key] += value
+            self.weights[key] = value
 
     def pull(self, keys):
         return [self.weights[key] for key in keys]
@@ -76,18 +80,27 @@ class ParameterServer(object):
 
 @ray.remote
 def learner_task(ps, replay_buffer, opt, learner_index):
+
+    net = sac1_model.Sac1(opt)
+    keys = net.get_weights()[0]
+    weights = ray.get(ps.pull.remote(keys))
+    net.set_weights(keys, weights)
+
     while True:
-        print(ray.get(replay_buffer.count.remote()))
-        time.sleep(1)
+
+        batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
+        net.parameter_update(batch)
+        keys, values = net.get_weights()
+        ps.push.remote(keys, values)
+        time.sleep(5)
 
 
 @ray.remote
 def worker_task(ps, replay_buffer, opt, worker_index):
-    # print(opt.env_name)
+
     env = gym.make(opt.env_name)
 
     net = sac1_model.Sac1(opt)
-
     keys = net.get_weights()[0]
 
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
@@ -95,11 +108,11 @@ def worker_task(ps, replay_buffer, opt, worker_index):
     epochs = opt.total_epochs // opt.num_workers
     total_steps = opt.steps_per_epoch * epochs
 
+    weights = ray.get(ps.pull.remote(keys))
+    net.set_weights(keys, weights)
+
     # Main loop: collect experience in env and update/log each epoch
     for t in range(total_steps):
-
-        weights = ray.get(ps.pull.remote(keys))
-        net.set_weights(keys, weights)
 
         if t > opt.start_steps:
             a = net.get_action(o)
@@ -125,7 +138,9 @@ def worker_task(ps, replay_buffer, opt, worker_index):
 
         # End of episode. Training (ep_len times).
         if d or (ep_len == opt.max_ep_len):
-            pass
+            # update parameters every episode
+            weights = ray.get(ps.pull.remote(keys))
+            net.set_weights(keys, weights)
 
 
 if __name__ == '__main__':
@@ -144,7 +159,15 @@ if __name__ == '__main__':
     # Start some training tasks.
     worker_tasks = [worker_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
 
+    time.sleep(5)
+
     learner_task = [learner_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
+    while True:
+        weights = ray.get(ps.pull.remote(all_keys))
+        net.set_weights(all_keys, weights)
+        ep_ret, ep_len = net.test_agent()
+        print(ep_ret, ep_len)
+        time.sleep(5)
     # Keep the main process running! Otherwise everything will shut down when main process finished.
     time.sleep(100)

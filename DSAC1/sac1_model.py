@@ -5,6 +5,7 @@ from __future__ import print_function
 import numpy as np
 import tensorflow as tf
 from numbers import Number
+import gym
 
 import core
 from core import get_vars
@@ -16,6 +17,7 @@ import ray.experimental.tf_utils
 
 class Sac1(object):
     def __init__(self, opt):
+        self.opt = opt
         with tf.Graph().as_default():
             tf.set_random_seed(opt.seed)
             np.random.seed(opt.seed)
@@ -91,21 +93,21 @@ class Sac1(object):
 
             # All ops to call during one training step
             if isinstance(opt.alpha, Number):
-                step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, tf.identity(opt.alpha),
+                self.step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, tf.identity(opt.alpha),
                         train_pi_op, train_value_op, self.target_update]
             else:
-                step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, opt.alpha,
+                self.step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, opt.alpha,
                         train_pi_op, train_value_op, self.target_update, train_alpha_op]
 
             # Initializing targets to match main variables
-            target_init = tf.group([tf.assign(v_targ, v_main)
+            self.target_init = tf.group([tf.assign(v_targ, v_main)
                                       for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
             self.sess = tf.Session(
                 config=tf.ConfigProto(
                     intra_op_parallelism_threads=1,
                     inter_op_parallelism_threads=1))
             self.sess.run(tf.global_variables_initializer())
-            self.sess.run(target_init)
+            self.sess.run(self.target_init)
             # Helper values.
 
             self.variables = ray.experimental.tf_utils.TensorFlowVariables(
@@ -113,8 +115,9 @@ class Sac1(object):
 
     def set_weights(self, variable_names, weights):
         self.variables.set_weights(dict(zip(variable_names, weights)))
-        # TODO need feed
-        self.sess.run(self.target_update)
+        # TODO self.sess.run(self.target_update) which way to update target parameters
+        # self.sess.run(self.target_update)
+        self.sess.run(self.target_init)
 
     def get_weights(self):
         weights = self.variables.get_weights()
@@ -131,6 +134,28 @@ class Sac1(object):
 
     def apply_gradients(self, gradients):
         pass
+
+    def parameter_update(self, batch):
+        feed_dict = {self.x_ph: batch['obs1'],
+                     self.x2_ph: batch['obs2'],
+                     self.a_ph: batch['acts'],
+                     self.r_ph: batch['rews'],
+                     self.d_ph: batch['done'],
+                     }
+        # step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, alpha, train_pi_op, train_value_op, target_update]
+        outs = self.sess.run(self.step_ops, feed_dict)
+
+    def test_agent(self, n=25):
+        test_env = gym.make(self.opt.env_name)
+        for j in range(n):
+            o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
+            while not(d or (ep_len == self.opt.max_ep_len)):
+                # Take deterministic actions at test time
+                o, r, d, _ = test_env.step(self.get_action(o, True))
+                ep_ret += r
+                ep_len += 1
+            # logger.store(TestEpRet=ep_ret, TestEpLen=ep_len)
+            return ep_ret, ep_len
 
 # eeeeeeeeeeeeeeee
 # sess = tf.Session()
