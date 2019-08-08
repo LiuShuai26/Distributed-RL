@@ -55,6 +55,7 @@ def build_summaries():
 
     return train_ops, valid_ops, training_vars, valid_vars
 
+
 # ===========================
 #   Agent Training
 # ===========================
