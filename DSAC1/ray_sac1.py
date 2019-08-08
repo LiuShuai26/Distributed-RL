@@ -92,11 +92,10 @@ def learner_task(ps, replay_buffer, opt, learner_index):
         # print(ray.get(replay_buffer.count.remote()))
         batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
         outs = net.parameter_update(batch)
-        print("LossPi=", outs[0], "LossQ1=", outs[1], "LossQ2=", outs[2], "Q1Vals=", outs[3], "Q2Vals=", outs[4],
-              "LogPi=", outs[5], "Alpha=", outs[6])
+        # print("LossPi=", outs[0], "LossQ1=", outs[1], "LossQ2=", outs[2], "Q1Vals=", outs[3], "Q2Vals=", outs[4],
+        #       "LogPi=", outs[5], "Alpha=", outs[6])
         keys, values = net.get_weights()
         ps.push.remote(keys, values)
-        time.sleep(3)
 
 
 @ray.remote
@@ -145,6 +144,7 @@ def worker_task(ps, replay_buffer, opt, worker_index):
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             net.set_weights(keys, weights)
+            print("ep_ret: ", ep_ret)
 
 
 if __name__ == '__main__':
