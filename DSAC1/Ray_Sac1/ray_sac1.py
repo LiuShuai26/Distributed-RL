@@ -12,7 +12,7 @@ flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 
 flags.DEFINE_string("env_name", "Pendulum-v0", "game env")
-flags.DEFINE_integer("total_epochs", 100, "total_epochs")
+flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 
@@ -101,13 +101,13 @@ def worker_task(ps, replay_buffer, opt, worker_index):
 
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
-    epochs = opt.total_epochs // opt.num_workers
-    total_steps = opt.steps_per_epoch * epochs
+    # epochs = opt.total_epochs // opt.num_workers
+    total_steps = opt.steps_per_epoch * opt.total_epochs
 
     weights = ray.get(ps.pull.remote(keys))
     net.set_weights(keys, weights)
 
-    # Main loop: collect experience in env and update/log each epoch
+    # TODO opt.start_steps
     for t in range(total_steps):
 
         if t > opt.start_steps:
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     # Start some training tasks.
     worker_tasks = [worker_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
 
-    time.sleep(10)
+    time.sleep(5)
 
     start_time = time.time()
     learner_task = [learner_task.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
@@ -169,5 +169,7 @@ if __name__ == '__main__':
 
         ep_ret = net.test_agent(start_time)
         sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
-        print("test reward: ", ep_ret, "sample_times: ", sample_times, "steps: ", steps, "buffer size: ", size)
+        print("test_reward:", ep_ret, "sample_times:", sample_times, "steps:", steps, "buffer_size:", size)
+        if steps >= opt.total_epochs * opt.steps_per_epoch:
+            exit(0)
         time.sleep(5)
