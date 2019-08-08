@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
+    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="ray_sac1 version-0.2.5 debuged&#10;dsac1 version-0.7.0 shared replay buffer by ray">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DDDPG/ddpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/DDDPG/ddpg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/parameters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/ray_sac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/ray_sac1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/sac1_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/sac1_model.py" afterDir="false" />
     </list>
@@ -31,7 +30,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="632">
+            <state relative-caret-position="1309">
               <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -76,11 +75,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/ray_sac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="166" column="18" lean-forward="true" selection-start-line="166" selection-start-column="18" selection-end-line="166" selection-end-column="18" />
+            <state relative-caret-position="198">
+              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -88,11 +87,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/sac1_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="524">
-              <caret line="117" column="35" selection-start-line="117" selection-start-column="24" selection-end-line="117" selection-end-column="35" />
+            <state relative-caret-position="715">
+              <caret line="182" lean-forward="true" selection-start-line="182" selection-end-line="182" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -101,22 +100,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DDDPG/ddpg.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-787">
-              <caret line="61" column="102" selection-start-line="61" selection-start-column="96" selection-end-line="61" selection-end-column="102" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-14">
-              <caret line="82" column="54" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
+            <state relative-caret-position="275">
+              <caret line="266" column="62" lean-forward="true" selection-start-line="266" selection-start-column="62" selection-end-line="266" selection-end-column="62" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -202,9 +189,9 @@
         <option value="$PROJECT_DIR$/DSAC1/core.py" />
         <option value="$PROJECT_DIR$/DSAC1/sac1.py" />
         <option value="$PROJECT_DIR$/DDDPG/ddpg.py" />
+        <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
         <option value="$PROJECT_DIR$/DSAC1/ray_sac1.py" />
         <option value="$PROJECT_DIR$/DSAC1/sac1_model.py" />
-        <option value="$PROJECT_DIR$/DSAC1/parameters.py" />
       </list>
     </option>
   </component>
@@ -597,7 +584,14 @@
       <option name="project" value="LOCAL" />
       <updated>1565242935037</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="ray_sac1 version-0.6 work well and add tensorboard&#10;dsac1 version-0.7.0 shared replay buffer by ray">
+      <created>1565249260675</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1565249260675</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -659,7 +653,8 @@
     <MESSAGE value="ray_sac1 version-0.2.3 debuged&#10;dsac1 version-0.7.0 shared replay buffer by ray" />
     <MESSAGE value="ray_sac1 version-0.2.4&#10;dsac1 version-0.7.0 shared replay buffer by ray" />
     <MESSAGE value="ray_sac1 version-0.2.5 debuged&#10;dsac1 version-0.7.0 shared replay buffer by ray" />
-    <option name="LAST_COMMIT_MESSAGE" value="ray_sac1 version-0.2.5 debuged&#10;dsac1 version-0.7.0 shared replay buffer by ray" />
+    <MESSAGE value="ray_sac1 version-0.6 work well and add tensorboard&#10;dsac1 version-0.7.0 shared replay buffer by ray" />
+    <option name="LAST_COMMIT_MESSAGE" value="ray_sac1 version-0.6 work well and add tensorboard&#10;dsac1 version-0.7.0 shared replay buffer by ray" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/auto_run_gpu.sh" />
@@ -924,26 +919,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-14">
-          <caret line="82" column="54" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DDDPG/ddpg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-787">
-          <caret line="61" column="102" selection-start-line="61" selection-start-column="96" selection-end-line="61" selection-end-column="102" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/dsac1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="305">
@@ -956,8 +931,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/parameters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="632">
+        <state relative-caret-position="1309">
           <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DDDPG/ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="467">
+          <caret line="129" lean-forward="true" selection-start-line="129" selection-end-line="129" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="266" column="62" lean-forward="true" selection-start-line="266" selection-start-column="62" selection-end-line="266" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DSAC1/ray_sac1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -966,20 +971,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/sac1_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="117" column="35" selection-start-line="117" selection-start-column="24" selection-end-line="117" selection-end-column="35" />
+        <state relative-caret-position="715">
+          <caret line="182" lean-forward="true" selection-start-line="182" selection-end-line="182" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/ray_sac1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="166" column="18" lean-forward="true" selection-start-line="166" selection-start-column="18" selection-end-line="166" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -8,13 +8,12 @@ from numbers import Number
 import gym
 import datetime
 import time
+import ray
+import ray.experimental.tf_utils
 
 import core
 from core import get_vars
 from core import mlp_actor_critic as actor_critic
-
-import ray
-import ray.experimental.tf_utils
 
 
 class Sac1(object):
@@ -112,7 +111,7 @@ class Sac1(object):
                     intra_op_parallelism_threads=1,
                     inter_op_parallelism_threads=1))
             self.sess.run(tf.global_variables_initializer())
-            # self.sess.run(self.target_init)
+
             if job == "main":
                 self.writer = tf.summary.FileWriter(
                     opt.summary_dir + "/" + str(datetime.datetime.now()) + "-" + opt.env_name + "-workers_num:" + str(
@@ -150,9 +149,7 @@ class Sac1(object):
                      self.r_ph: batch['rews'],
                      self.d_ph: batch['done'],
                      }
-        # step_ops = [pi_loss, q1_loss, q2_loss, q1, q2, logp_pi, alpha, train_pi_op, train_value_op, target_update]
-        outs = self.sess.run(self.step_ops, feed_dict)
-        return outs
+        self.sess.run(self.step_ops, feed_dict)
 
     def test_agent(self, start_time, n=25):
         test_env = gym.make(self.opt.env_name)
@@ -180,21 +177,6 @@ class Sac1(object):
         test_summaries.append(tf.summary.scalar("Reward", episode_reward))
 
         test_ops = tf.summary.merge(test_summaries)
-
         test_vars = [episode_reward]
 
         return test_ops, test_vars
-
-# sess = tf.Session()
-# sess.run(tf.global_variables_initializer())
-#
-# variables = ray.experimental.tf_utils.TensorFlowVariables(value_loss, sess)
-# weights = variables.get_weights()
-#
-# for v_main, v_targ in zip(get_vars('main'), get_vars('target')):
-#     print(sess.run(v_main))
-#
-# # print([key for key in list(weights.keys()) if "main" in key])
-# # print([weights[key] for key in list(weights.keys()) if "main" in key])
-# exit(886)
-# time.sleep(100)

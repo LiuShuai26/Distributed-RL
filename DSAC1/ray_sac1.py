@@ -1,18 +1,11 @@
 import numpy as np
 import tensorflow as tf
-
-import gym
 import time
+import ray
+import gym
 
 from parameters import ParametersSac1
 import sac1_model
-
-import ray
-import gym
-import datetime
-from spinup.utils.run_utils import setup_logger_kwargs
-import model
-from spinup.utils.logx import EpochLogger
 
 
 flags = tf.app.flags
@@ -70,7 +63,7 @@ class ParameterServer(object):
     # def push(self, keys, values):
     #     for key, value in zip(keys, values):
     #         self.weights[key] += value
-
+    # TODO push gradients or parameters
     def push(self, keys, values):
         values = [value.copy() for value in values]
         for key, value in zip(keys, values):
@@ -89,11 +82,8 @@ def learner_task(ps, replay_buffer, opt, learner_index):
     net.set_weights(keys, weights)
 
     while True:
-        # print(ray.get(replay_buffer.count.remote()))
         batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
-        outs = net.parameter_update(batch)
-        # print("LossPi=", outs[0], "LossQ1=", outs[1], "LossQ2=", outs[2], "Q1Vals=", outs[3], "Q2Vals=", outs[4],
-        #       "LogPi=", outs[5], "Alpha=", outs[6])
+        net.parameter_update(batch)
         keys, values = net.get_weights()
         ps.push.remote(keys, values)
 
@@ -144,7 +134,7 @@ def worker_task(ps, replay_buffer, opt, worker_index):
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             net.set_weights(keys, weights)
-            # print("ep_ret: ", ep_ret)
+
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
 
