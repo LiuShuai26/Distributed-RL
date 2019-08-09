@@ -6,6 +6,7 @@ import gym
 
 from parameters import ParametersSac1
 import sac1_model
+import os
 
 
 flags = tf.app.flags
@@ -31,6 +32,8 @@ class ReplayBuffer:
         self.done_buf = np.zeros(size, dtype=np.float32)
         self.ptr, self.size, self.max_size = 0, 0, size
         self.steps, self.sample_times = 0, 0
+        print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
+        print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     def store(self, obs, act, rew, next_obs, done):
         self.obs1_buf[self.ptr] = obs
@@ -55,14 +58,14 @@ class ReplayBuffer:
         return self.sample_times, self.steps, self.size
 
 
-@ray.remote
 class ParameterServer(object):
     def __init__(self, keys, values):
         # These values will be mutated, so we must create a copy that is not
         # backed by the object store.
         values = [value.copy() for value in values]
         self.weights = dict(zip(keys, values))
-
+        print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
+        print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
     # def push(self, keys, values):
     #     for key, value in zip(keys, values):
     #         self.weights[key] += value
@@ -76,8 +79,10 @@ class ParameterServer(object):
         return [self.weights[key] for key in keys]
 
 
-@ray.remote
+@ray.remote(num_gpus=1, max_calls=1)
 def learner_task(ps, replay_buffer, opt, learner_index):
+    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
+    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     net = sac1_model.Sac1(opt, job="learner")
     keys = net.get_weights()[0]
@@ -93,6 +98,8 @@ def learner_task(ps, replay_buffer, opt, learner_index):
 
 @ray.remote
 def worker_task(ps, replay_buffer, opt, worker_index):
+    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
+    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     env = gym.make(opt.env_name)
 
@@ -144,6 +151,9 @@ def worker_task(ps, replay_buffer, opt, worker_index):
 if __name__ == '__main__':
 
     ray.init()
+
+    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
+    # print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     opt = ParametersSac1(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers)
 
