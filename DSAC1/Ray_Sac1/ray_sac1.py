@@ -45,7 +45,7 @@ class ReplayBuffer:
         self.size = min(self.size+1, self.max_size)
         self.steps += 1
 
-        while self.steps / self.sample_times > 2:
+        while self.sample_times > 0 and self.steps / self.sample_times > 2:
             time.sleep(0.1)
 
     def sample_batch(self, batch_size=32):

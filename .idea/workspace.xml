@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="ray_sac1 version-0.8.0 tensorboard add sample_times, only learner use GPU&#10;dsac1 version-0.7.0">
+    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py" afterDir="false" />
     </list>
@@ -40,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="539">
-              <caret line="46" column="8" selection-start-line="46" selection-start-column="8" selection-end-line="46" selection-end-column="8" />
+            <state relative-caret-position="546">
+              <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -617,7 +617,14 @@
       <option name="project" value="LOCAL" />
       <updated>1565270861801</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="ray_sac1 version-0.8.2 worker wait&#10;dsac1 version-0.7.0">
+      <created>1565323209563</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1565323209563</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -695,7 +702,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="dsac1 version0.01" />
     <MESSAGE value="dsac1 version0.10 parameter set up ok" />
     <MESSAGE value="dsac1 version-0.50 all good" />
     <MESSAGE value="dsac1 version-0.50 clean up" />
@@ -720,7 +726,8 @@
     <MESSAGE value="ray_sac1 version-0.7.1 moniter buffer status&#10;dsac1 version-0.7.0" />
     <MESSAGE value="ray_sac1 version-0.7.5 debugged, auto terminate process&#10;dsac1 version-0.7.0" />
     <MESSAGE value="ray_sac1 version-0.8.0 tensorboard add sample_times, only learner use GPU&#10;dsac1 version-0.7.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="ray_sac1 version-0.8.0 tensorboard add sample_times, only learner use GPU&#10;dsac1 version-0.7.0" />
+    <MESSAGE value="ray_sac1 version-0.8.2 worker wait&#10;dsac1 version-0.7.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="ray_sac1 version-0.8.2 worker wait&#10;dsac1 version-0.7.0" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/test.py" />
@@ -1024,8 +1031,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="46" column="8" selection-start-line="46" selection-start-column="8" selection-end-line="46" selection-end-column="8" />
+        <state relative-caret-position="546">
+          <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
