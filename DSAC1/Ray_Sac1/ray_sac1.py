@@ -45,6 +45,9 @@ class ReplayBuffer:
         self.size = min(self.size+1, self.max_size)
         self.steps += 1
 
+        while self.steps / self.sample_times > 2:
+            time.sleep(0.1)
+
     def sample_batch(self, batch_size=32):
         idxs = np.random.randint(0, self.size, size=batch_size)
         self.sample_times += 1
@@ -58,6 +61,7 @@ class ReplayBuffer:
         return self.sample_times, self.steps, self.size
 
 
+@ray.remote
 class ParameterServer(object):
     def __init__(self, keys, values):
         # These values will be mutated, so we must create a copy that is not
