@@ -45,9 +45,6 @@ class ReplayBuffer:
         self.size = min(self.size+1, self.max_size)
         self.steps += 1
 
-        while self.sample_times > 0 and self.steps / self.sample_times > 2:
-            time.sleep(0.1)
-
     def sample_batch(self, batch_size=32):
         idxs = np.random.randint(0, self.size, size=batch_size)
         self.sample_times += 1
@@ -145,6 +142,11 @@ def worker_task(ps, replay_buffer, opt, worker_index):
 
         # End of episode. Training (ep_len times).
         if d or (ep_len == opt.max_ep_len):
+            # sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
+            # while sample_times > 0 and steps / sample_times > 2:
+            #     time.sleep(0.1)
+            time.sleep(1)
+
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             net.set_weights(keys, weights)
