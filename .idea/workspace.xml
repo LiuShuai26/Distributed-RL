@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py" beforeDir="false" afterPath="$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,8 +39,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="546">
-              <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
+            <state relative-caret-position="649">
+              <caret line="148" lean-forward="true" selection-start-line="148" selection-end-line="148" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -65,7 +64,7 @@
         <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2035">
-              <caret line="292" lean-forward="true" selection-start-line="292" selection-end-line="292" />
+              <caret line="292" selection-start-line="292" selection-end-line="292" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -332,9 +331,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ray_sac1 (2)" />
         <item itemvalue="Python.sac1_model" />
         <item itemvalue="Python.sac1" />
-        <item itemvalue="Python.ray_sac1 (2)" />
         <item itemvalue="Python.ray_sac1 (1)" />
         <item itemvalue="Python.ray_sac1" />
       </list>
@@ -624,15 +623,29 @@
       <option name="project" value="LOCAL" />
       <updated>1565323209563</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="ray_sac1 version-0.8.2 worker wait&#10;dsac1 version-0.7.0">
+      <created>1565323722646</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1565323722646</updated>
+    </task>
+    <task id="LOCAL-00041" summary="ray_sac1 version-0.8.2 worker wait&#10;dsac1 version-0.7.0">
+      <created>1565334152394</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1565334152394</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="-4" width="2562" height="1445" extended-state="6" />
+    <frame x="-1" y="-1444" width="2562" height="1445" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.102089085" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.102089085" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.49940875" weight="0.398956" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5005913" side_tool="true" weight="0.398956" />
@@ -640,7 +653,7 @@
       <window_info anchor="bottom" id="Message" order="3" />
       <window_info anchor="bottom" id="Find" order="4" />
       <window_info anchor="bottom" id="Version Control" order="5" weight="0.32960477" />
-      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.49940875" visible="true" weight="0.32960477" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.49940875" visible="true" weight="0.32960477" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.3997017" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
@@ -1012,7 +1025,7 @@
     <entry file="file://$PROJECT_DIR$/DSAC1/sac1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2035">
-          <caret line="292" lean-forward="true" selection-start-line="292" selection-end-line="292" />
+          <caret line="292" selection-start-line="292" selection-end-line="292" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -1031,8 +1044,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="546">
-          <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
+        <state relative-caret-position="649">
+          <caret line="148" lean-forward="true" selection-start-line="148" selection-end-line="148" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

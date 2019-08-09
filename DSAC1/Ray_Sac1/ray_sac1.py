@@ -142,10 +142,10 @@ def worker_task(ps, replay_buffer, opt, worker_index):
 
         # End of episode. Training (ep_len times).
         if d or (ep_len == opt.max_ep_len):
-            # sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
-            # while sample_times > 0 and steps / sample_times > 2:
-            #     time.sleep(0.1)
-            time.sleep(1)
+            sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
+            while sample_times > 0 and steps / sample_times > 2:
+                sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
+                time.sleep(0.1)
 
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
