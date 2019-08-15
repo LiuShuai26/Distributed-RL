@@ -6,7 +6,7 @@ import datetime
 
 
 class ParametersSac1:
-    def __init__(self, env_name, total_epochs, num_workers=1):
+    def __init__(self, env_name, total_epochs, num_workers=1, num_w=1):
         # parameters set
 
         # ray_servr_address = ""
@@ -16,6 +16,8 @@ class ParametersSac1:
         # BipedalWalker-v2
         # Pendulum-v0
         # self.env_name = 'MountainCarContinuous-v0'
+
+        self.num_w = num_w
 
         # TODO
         env = gym.make(env_name)

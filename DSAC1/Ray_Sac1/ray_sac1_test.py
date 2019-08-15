@@ -16,7 +16,7 @@ flags.DEFINE_string("env_name", "Pendulum-v0", "game env")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
-
+flags.DEFINE_integer("num_w", 1, "worker_step / sample_times")
 
 @ray.remote
 class ReplayBuffer:
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
     # print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
-    opt = ParametersSac1(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers)
+    opt = ParametersSac1(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.num_w)
 
     # Create a parameter server with some random weights.
     net = sac1_model.Sac1(opt, job="main")
@@ -187,9 +187,6 @@ if __name__ == '__main__':
         ep_ret = net.test_agent(start_time, replay_buffer)
         sample_times, steps, size = ray.get(replay_buffer.get_counts.remote())
         print("test_reward:", ep_ret, "sample_times:", sample_times, "steps:", steps, "buffer_size:", size)
-        if sample_times > 100:
-            net.save_model(steps)
-
         if steps >= opt.total_epochs * opt.steps_per_epoch:
-            exit(0)
+            exit(886)
         time.sleep(5)

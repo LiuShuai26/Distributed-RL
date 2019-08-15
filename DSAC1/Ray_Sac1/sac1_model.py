@@ -106,6 +106,8 @@ class Sac1(object):
             # Initializing targets to match main variables
             self.target_init = tf.group([tf.assign(v_targ, v_main)
                                       for v_main, v_targ in zip(get_vars('main'), get_vars('target'))])
+            self.saver = tf.train.Saver(max_to_keep=5)
+
             if job == 'learner':
                 self.sess = tf.Session(
                     config=tf.ConfigProto(
@@ -179,6 +181,14 @@ class Sac1(object):
         self.writer.add_summary(summary_str, current_time-start_time)
         self.writer.flush()
         return sum(rew)/25
+
+    def save_model(self, global_step):
+
+        save_path = self.saver.save(self.sess, self.opt.save_dir + "/model-workers_num:" + str(self.opt.num_workers),
+                               global_step=global_step)
+        print('-------------------------------------')
+        print("Model saved in file: %s" % save_path)
+        print('-------------------------------------')
 
     # Tensorflow Summary Ops
     def build_summaries(self):
