@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="add Gfootball">
+    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Gfootball/dsqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/dsqn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gfootball/hyperparams.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/hyperparams.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,7 +17,7 @@
         <entry file="file://$PROJECT_DIR$/Gfootball/actor_learner.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="661">
-              <caret line="174" column="49" lean-forward="true" selection-start-line="174" selection-start-column="49" selection-end-line="174" selection-end-column="49" />
+              <caret line="174" column="49" selection-start-line="174" selection-start-column="49" selection-end-line="174" selection-end-column="49" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -29,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Gfootball/dsqn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4937">
-              <caret line="232" column="65" lean-forward="true" selection-start-line="232" selection-start-column="65" selection-end-line="232" selection-end-column="65" />
+            <state relative-caret-position="2432">
+              <caret line="171" column="55" selection-start-line="171" selection-start-column="43" selection-end-line="171" selection-end-column="55" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -625,7 +624,14 @@
       <option name="project" value="LOCAL" />
       <updated>1565842629125</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="add try except in case env broken">
+      <created>1566184782102</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1566184782102</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -633,7 +639,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.0760741" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.0760741" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.49940875" weight="0.398956" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5005913" side_tool="true" weight="0.398956" />
@@ -641,7 +647,7 @@
       <window_info anchor="bottom" id="Message" order="3" />
       <window_info anchor="bottom" id="Find" order="4" />
       <window_info anchor="bottom" id="Version Control" order="5" weight="0.32960477" />
-      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.49940875" weight="0.32901752" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.49940875" visible="true" weight="0.32885906" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.3997017" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
@@ -703,7 +709,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="dsac1 version-0.50 clean up" />
     <MESSAGE value="dsac1 version-0.50 add total epochs in command line and clean up" />
     <MESSAGE value="dsac1 version-0.51 replay buffer size = 1000,000 // workers_number" />
     <MESSAGE value="dsac1 version-0.51 replay buffer size = 1000,000 // workers_number ok and clean up" />
@@ -728,7 +733,8 @@
     <MESSAGE value="ray_sac1 version-0.8.2 worker wait&#10;dsac1 version-0.7.0" />
     <MESSAGE value="ray_sac1 version-0.8.3 worker wait&#10;dsac1 version-0.7.0" />
     <MESSAGE value="add Gfootball" />
-    <option name="LAST_COMMIT_MESSAGE" value="add Gfootball" />
+    <MESSAGE value="add try except in case env broken" />
+    <option name="LAST_COMMIT_MESSAGE" value="add try except in case env broken" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/auto_run.sh" />
@@ -1062,7 +1068,7 @@
     <entry file="file://$PROJECT_DIR$/Gfootball/actor_learner.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="661">
-          <caret line="174" column="49" lean-forward="true" selection-start-line="174" selection-start-column="49" selection-end-line="174" selection-end-column="49" />
+          <caret line="174" column="49" selection-start-line="174" selection-start-column="49" selection-end-line="174" selection-end-column="49" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
@@ -1071,8 +1077,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gfootball/dsqn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4937">
-          <caret line="232" column="65" lean-forward="true" selection-start-line="232" selection-start-column="65" selection-end-line="232" selection-end-column="65" />
+        <state relative-caret-position="2432">
+          <caret line="171" column="55" selection-start-line="171" selection-start-column="43" selection-end-line="171" selection-end-column="55" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

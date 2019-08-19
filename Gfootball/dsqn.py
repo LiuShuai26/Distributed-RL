@@ -177,6 +177,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     env = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
                                                    with_checkpoints=False, representation='simple115',
                                                    render=False)
+    env = FootballWrapper(env)
 
     agent = Actor(opt, job="worker")
     keys = agent.get_weights()[0]
@@ -230,9 +231,9 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
             print("Error, reset env")
             env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
                                                   representation='simple115', render=False)
+            env = FootballWrapper(env)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
             continue
-
 
 
 @ray.remote
@@ -252,6 +253,7 @@ def worker_test(ps, replay_buffer, opt, worker_index=0):
 
     test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
                                                representation='simple115', render=False)
+    test_env = FootballWrapper(test_env)
 
     while True:
         weights = ray.get(ps.pull.remote(keys))
@@ -284,6 +286,39 @@ def worker_test(ps, replay_buffer, opt, worker_index=0):
         #     exit(0)
 
         time.sleep(5)
+
+
+# reward wrapper
+class FootballWrapper(object):
+
+    def __init__(self, env):
+        self._env = env
+
+    def __getattr__(self, name):
+        return getattr(self._env, name)
+
+    def reset(self):
+        obs = self._env.reset()
+        while obs[25] > 0:
+            obs = self._env.reset()
+        self.pre_who_controls_ball = obs[7:9]
+        return obs
+
+    def step(self, action):
+        obs, reward, done, info = self._env.step(action)
+        if obs[8] == 1 or reward != 0:
+            done = True
+        else:
+            done = False
+        reward = reward + self.incentive(obs)
+        return obs, reward, done, info
+
+    def incentive(self, obs):
+        who_controls_ball = obs[7]
+        pos_ball = obs[0:2]
+        distance_to_goal =np.exp(-np.linalg.norm(pos_ball-[1.01,0]))
+        r = who_controls_ball * distance_to_goal * 0.003
+        return r
 
 
 if __name__ == '__main__':
