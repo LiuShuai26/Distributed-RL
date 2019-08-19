@@ -46,7 +46,7 @@ class HyperParameters:
 
         self.ac_kwargs = dict(hidden_sizes=[400, 300])
 
-        env_football = football_env.create_environment(env_name='11_vs_11_stochastic',
+        env_football = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
                                                        with_checkpoints=False, representation='simple115',
                                                        render=False)
 
@@ -68,6 +68,7 @@ class HyperParameters:
 
         self.gamma = 0.997
         self.replay_size = 3000000
+        # self.lr = 1e-4
         self.lr = 1e-3
         self.polyak = 0.995
 
