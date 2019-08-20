@@ -190,13 +190,15 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     weights = ray.get(ps.pull.remote(keys))
     agent.set_weights(keys, weights)
     # TODO opt.start_steps
-    for t in range(total_steps):
+    # for t in range(total_steps):
+    t = 0
+    while True:
         try:
             if t > opt.start_steps:
                 a = agent.get_action(o)
             else:
                 a = env.action_space.sample()
-
+                t += 1
             # Step the env
             o2, r, d, _ = env.step(a)
             ep_ret += r
@@ -237,7 +239,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
 
 @ray.remote
-def worker_test(ps, replay_buffer, opt, worker_index=0):
+def worker_test(ps, replay_buffer, opt):
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
     print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
@@ -245,8 +247,6 @@ def worker_test(ps, replay_buffer, opt, worker_index=0):
 
     keys, weights = agent.get_weights()
 
-    # Keep the main process running! Otherwise everything will shut down when main process finished.
-    start_time = time.time()
     time0 = time1 = time.time()
     sample_times1, steps, size = ray.get(replay_buffer.get_counts.remote())
     max_ret = -1000

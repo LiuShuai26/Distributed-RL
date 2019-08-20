@@ -44,7 +44,7 @@ class HyperParameters:
         # gpu memory fraction
         self.gpu_fraction = 0.3
 
-        self.ac_kwargs = dict(hidden_sizes=[400, 300])
+        self.ac_kwargs = dict(hidden_sizes=[800, 600])
 
         env_football = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
                                                        with_checkpoints=False, representation='simple115',
