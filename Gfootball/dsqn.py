@@ -297,28 +297,14 @@ class FootballWrapper(object):
     def __getattr__(self, name):
         return getattr(self._env, name)
 
-    def reset(self):
-        obs = self._env.reset()
-        while obs[25] > 0:
-            obs = self._env.reset()
-        self.pre_who_controls_ball = obs[7:9]
-        return obs
-
     def step(self, action):
         obs, reward, done, info = self._env.step(action)
-        if obs[8] == 1 or reward != 0:
+        if reward != 0:
             done = True
         else:
             done = False
-        reward = reward + self.incentive(obs)
-        return obs, reward, done, info
 
-    def incentive(self, obs):
-        who_controls_ball = obs[7]
-        pos_ball = obs[0:2]
-        distance_to_goal =np.exp(-np.linalg.norm(pos_ball-[1.01,0]))
-        r = who_controls_ball * distance_to_goal * 0.003
-        return r
+        return obs, reward, done, info
 
 
 if __name__ == '__main__':
