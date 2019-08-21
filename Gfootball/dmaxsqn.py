@@ -4,9 +4,8 @@ import time
 import ray
 import gym
 from gym.spaces import Box, Discrete
-import gfootball.env as football_env
 
-from hyperparams import HyperParameters
+from hyperparams_gfootball import HyperParameters
 from actor_learner import Actor, Learner
 
 import os
@@ -15,13 +14,15 @@ import multiprocessing
 import copy
 import signal
 
+import gfootball.env as football_env
+
 flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 
 # "Pendulum-v0" 'BipedalWalker-v2' 'LunarLanderContinuous-v2'
-flags.DEFINE_string("env_name", "LunarLanderContinuous-v2", "game env")
+flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
-flags.DEFINE_integer("num_workers", 10, "number of workers")
+flags.DEFINE_integer("num_workers", 20, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("is_restore", "False", "True or False. True means restore weights from pickle file.")
 flags.DEFINE_float("a_l_ratio", 2, "steps / sample_times")
@@ -100,7 +101,7 @@ class ParameterServer(object):
 
     # save weights to disk
     def save_weights(self):
-        pickle_out = open("weights.pickle","wb")
+        pickle_out = open("weights.pickle", "wb")
         pickle.dump(self.weights, pickle_out)
         pickle_out.close()
 
@@ -157,14 +158,10 @@ def worker_train(ps, replay_buffer, opt, learner_index):
 
     cnt = 1
     while True:
-        # batch = ray.get(replay_buffer.sample_batch.remote(opt.batch_size))
         batch = cache.q1.get()
         agent.train(batch)
         if cnt % 300 == 0:
-            # print('q1.qsize():', q1.qsize(), 'q2.qsize():', q2.qsize())
             cache.q2.put(agent.get_weights())
-            # keys, values = agent.get_weights()
-            # ps.push.remote(copy.deepcopy(keys), copy.deepcopy(values))
         cnt += 1
 
 
@@ -173,11 +170,13 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
     print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
+    # ------ env set up ------
     # env = gym.make(opt.env_name)
     env = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
                                                    with_checkpoints=False, representation='simple115',
                                                    render=False)
     env = FootballWrapper(env)
+    # ------ env set up end ------
 
     agent = Actor(opt, job="worker")
     keys = agent.get_weights()[0]
@@ -189,53 +188,52 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
     weights = ray.get(ps.pull.remote(keys))
     agent.set_weights(keys, weights)
-    # TODO opt.start_steps
+
     # for t in range(total_steps):
     t = 0
     while True:
+        if t > opt.start_steps:
+            a = agent.get_action(o)
+        else:
+            a = env.action_space.sample()
+            t += 1
+        # Step the env
         try:
-            if t > opt.start_steps:
-                a = agent.get_action(o)
-            else:
-                a = env.action_space.sample()
-                t += 1
-            # Step the env
             o2, r, d, _ = env.step(a)
-            ep_ret += r
-            ep_len += 1
-
-            # Ignore the "done" signal if it comes from hitting the time
-            # horizon (that is, when it's an artificial terminal signal
-            # that isn't based on the agent's state)
-            d = False if ep_len == opt.max_ep_len else d
-
-            # Store experience to replay buffer
-            replay_buffer.store.remote(o, a, r, o2, d)
-
-            # Super critical, easy to overlook step: make sure to update
-            # most recent observation!
-            o = o2
-
-            # End of episode. Training (ep_len times).
-            if d or (ep_len == opt.max_ep_len):
-                sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
-
-                while sample_times > 0 and steps / sample_times > opt.a_l_ratio:
-                    sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
-                    time.sleep(0.1)
-
-                # update parameters every episode
-                weights = ray.get(ps.pull.remote(keys))
-                agent.set_weights(keys, weights)
-
-                o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
         except Exception:
             print("Error, reset env")
             env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
                                                   representation='simple115', render=False)
-            env = FootballWrapper(env)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
             continue
+        ep_ret += r
+        ep_len += 1
+
+        # Ignore the "done" signal if it comes from hitting the time
+        # horizon (that is, when it's an artificial terminal signal
+        # that isn't based on the agent's state)
+        d = False if ep_len == opt.max_ep_len else d
+
+        # Store experience to replay buffer
+        replay_buffer.store.remote(o, a, r, o2, d)
+
+        # Super critical, easy to overlook step: make sure to update
+        # most recent observation!
+        o = o2
+
+        # End of episode. Training (ep_len times).
+        if d or (ep_len == opt.max_ep_len):
+            sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
+
+            while sample_times > 0 and steps / sample_times > opt.a_l_ratio:
+                sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
+                time.sleep(0.1)
+
+            # update parameters every episode
+            weights = ray.get(ps.pull.remote(keys))
+            agent.set_weights(keys, weights)
+
+            o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
 
 @ray.remote
@@ -251,9 +249,13 @@ def worker_test(ps, replay_buffer, opt):
     sample_times1, steps, size = ray.get(replay_buffer.get_counts.remote())
     max_ret = -1000
 
+    # ------ env set up ------
     test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
                                                representation='simple115', render=False)
     test_env = FootballWrapper(test_env)
+
+    # test_env = gym.make(opt.env_name)
+    # ------ env set up end ------
 
     while True:
         weights = ray.get(ps.pull.remote(keys))
@@ -267,6 +269,8 @@ def worker_test(ps, replay_buffer, opt):
             test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
                                                        representation='simple115', render=False)
             continue
+        # ep_ret = agent.test(test_env, replay_buffer)
+
         sample_times2, steps, size = ray.get(replay_buffer.get_counts.remote())
         time2 = time.time()
         print("test_reward:", ep_ret, "sample_times:", sample_times2, "steps:", steps, "buffer_size:", size)
@@ -309,11 +313,14 @@ class FootballWrapper(object):
 
 if __name__ == '__main__':
 
-    ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
-
+    # ray.init(object_store_memory=6000000000, redis_max_memory=6000000000)
+    ray.init()
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
 
+    # ------ HyperParameters ------
     opt = HyperParameters(FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
+    # opt = HyperParameters(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
+    # ------ end ------
 
     # Create a parameter server with some random weights.
     if FLAGS.is_restore == "True":

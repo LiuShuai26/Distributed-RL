@@ -6,27 +6,6 @@ import datetime
 import gfootball.env as football_env
 
 
-class FootballWrapper(object):
-
-    def __init__(self, env):
-        self._env = env
-
-    def __getattr__(self, name):
-        return getattr(self._env, name)
-
-    def step(self, action):
-        obs, reward, done, info = self._env.step(action)
-        reward = reward + self.incentive(obs)
-        return obs, reward, done, info
-
-    def incentive(self, obs):
-        who_controls_ball = obs[7:9]
-        pos_ball = obs[0]
-        distance_to_goal = np.array([(pos_ball + 1) / 2.0, (pos_ball - 1) / 2.0])
-        r = np.dot(who_controls_ball, distance_to_goal) * 0.003
-        return r
-
-
 class HyperParameters:
     def __init__(self, total_epochs, num_workers=1, a_l_ratio=1):
         # parameters set
@@ -35,16 +14,13 @@ class HyperParameters:
 
         # self.env_name = 'LunarLanderContinuous-v2'   # 'MountainCarContinuous-v0'
         self.env_name = "gfootball"
-        # BipedalWalker-v2
-        # Pendulum-v0
-        # self.env_name = 'MountainCarContinuous-v0'
 
         self.a_l_ratio = a_l_ratio
 
         # gpu memory fraction
         self.gpu_fraction = 0.3
 
-        self.ac_kwargs = dict(hidden_sizes=[800, 600])
+        self.ac_kwargs = dict(hidden_sizes=[600, 400])
 
         env_football = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
                                                        with_checkpoints=False, representation='simple115',
@@ -75,10 +51,10 @@ class HyperParameters:
         self.steps_per_epoch = 5000
         self.batch_size = 100
         self.start_steps = 10000
-        self.max_ep_len = 1000
+        self.max_ep_len = 2000
         self.save_freq = 1
 
         self.seed = 0
 
-        self.summary_dir = './tboard_ray_sac1'  # Directory for storing tensorboard summary results
-        self.save_dir = './model_ray_sac1'      # Directory for storing trained model
+        self.summary_dir = './tboard_ray'  # Directory for storing tensorboard summary results
+        self.save_dir = './model_ray'      # Directory for storing trained model

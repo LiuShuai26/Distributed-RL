@@ -2,19 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="add gfootball wrapper">
-      <change afterPath="$PROJECT_DIR$/Dmaxsqn/actor_learner.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dmaxsqn/core.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dmaxsqn/dmaxsqn.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dmaxsqn/hyperparams_atari.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Gfootball/hyperparams_atari.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Gfootball/.idea/Gfootball.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Gfootball/dmaxsqn.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Gfootball/hyperparams_gfootball.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/async_parameter_server.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DSAC1/sac1.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gfootball/dsqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/dsqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dmaxsqn/dmaxsqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dmaxsqn/dmaxsqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gfootball/actor_learner.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/actor_learner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gfootball/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gfootball/dsqn.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Gfootball/hyperparams.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tf_distributed.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,8 +44,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Dmaxsqn/dmaxsqn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="655">
-              <caret line="277" selection-start-line="277" selection-end-line="277" />
+            <state relative-caret-position="716">
+              <caret line="344" selection-start-line="344" selection-end-line="344" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -173,9 +169,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="4">
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="622" />
     <option name="y" value="24" />
-    <option name="width" value="1280" />
+    <option name="width" value="1938" />
     <option name="height" value="1416" />
   </component>
   <component name="ProjectView">
@@ -204,7 +201,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../CreateAMind/spinup/algos/maxsqn/maxsqn.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Gfootball" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/../CreateAMind/spinup/algos/maxsqn/maxsqn.py" />
   </component>
@@ -669,11 +666,18 @@
       <option name="project" value="LOCAL" />
       <updated>1566187639490</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Distributed maxsqn">
+      <created>1566369338856</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1566369338856</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2560" y="24" width="1280" height="1416" extended-state="4" />
+    <frame x="0" y="-4" width="2560" height="1444" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
@@ -685,7 +689,7 @@
       <window_info anchor="bottom" id="Message" order="3" />
       <window_info anchor="bottom" id="Find" order="4" />
       <window_info anchor="bottom" id="Version Control" order="5" weight="0.32960477" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.49940875" visible="true" weight="0.33587205" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.49940875" visible="true" weight="0.32885906" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.3997017" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
@@ -766,7 +770,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="dsac1 version-0.51 replay buffer size = 1000,000 // workers_number" />
     <MESSAGE value="dsac1 version-0.51 replay buffer size = 1000,000 // workers_number ok and clean up" />
     <MESSAGE value="dsac1 version-0.6.0 shared replay buffer by ray" />
     <MESSAGE value="dsac1 version-0.6.1 shared replay buffer by ray" />
@@ -791,7 +794,8 @@
     <MESSAGE value="add Gfootball" />
     <MESSAGE value="add try except in case env broken" />
     <MESSAGE value="add gfootball wrapper" />
-    <option name="LAST_COMMIT_MESSAGE" value="add gfootball wrapper" />
+    <MESSAGE value="Distributed maxsqn" />
+    <option name="LAST_COMMIT_MESSAGE" value="Distributed maxsqn" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../.conda/envs/spinningup/lib/python3.6/site-packages/tensorflow/python/platform/app.py">
@@ -1125,8 +1129,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Dmaxsqn/dmaxsqn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="655">
-          <caret line="277" selection-start-line="277" selection-end-line="277" />
+        <state relative-caret-position="716">
+          <caret line="344" selection-start-line="344" selection-end-line="344" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
