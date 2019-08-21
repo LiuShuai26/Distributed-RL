@@ -20,10 +20,10 @@ FLAGS = tf.app.flags.FLAGS
 # "Pendulum-v0" 'BipedalWalker-v2' 'LunarLanderContinuous-v2'
 flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
-flags.DEFINE_integer("num_workers", 1, "number of workers")
+flags.DEFINE_integer("num_workers", 2, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("is_restore", "False", "True or False. True means restore weights from pickle file.")
-flags.DEFINE_float("a_l_ratio", 2, "steps / sample_times")
+flags.DEFINE_float("a_l_ratio", 20, "steps / sample_times")
 
 
 @ray.remote
@@ -268,7 +268,8 @@ def worker_test(ps, replay_buffer, opt):
         ep_ret = agent.test(test_env, replay_buffer)
         sample_times2, steps, size = ray.get(replay_buffer.get_counts.remote())
         time2 = time.time()
-        print("test_reward:", ep_ret, "sample_times:", sample_times2, "steps:", steps, "buffer_size:", size)
+        print("test_reward:", ep_ret, "sample_times:", sample_times2, "steps:", steps, "buffer_size:", size,
+              "actual a_l_ratio:", str(steps/(sample_times2+1))[:4])
         print('update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
 
         if ep_ret > max_ret:
