@@ -313,7 +313,7 @@ class FootballWrapper(object):
 
     def step(self, action):
         obs, reward, done, info = self._env.step(action)
-        if reward != 0:
+        if reward == -1 and reward == 1:
             done = True
         else:
             done = False
