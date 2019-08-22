@@ -23,7 +23,7 @@ class HyperParameters:
         self.ac_kwargs = dict(hidden_sizes=[600, 400])
 
         env_football = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
-                                                       with_checkpoints=False, representation='simple115',
+                                                       with_checkpoints=True, representation='simple115',
                                                        render=False)
 
         # env = FootballWrapper(env_football)
@@ -49,7 +49,7 @@ class HyperParameters:
         self.polyak = 0.995
 
         self.steps_per_epoch = 5000
-        self.batch_size = 100
+        self.batch_size = 256
         self.start_steps = 10000
         self.max_ep_len = 2000
         self.save_freq = 1

@@ -179,7 +179,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     # ------ env set up ------
     # env = gym.make(opt.env_name)
     env = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
-                                                   with_checkpoints=False, representation='simple115',
+                                                   with_checkpoints=True, representation='simple115',
                                                    render=False)
     env = FootballWrapper(env)
     # ------ env set up end ------
@@ -208,7 +208,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
             o2, r, d, _ = env.step(a)
         except Exception:
             print("Error, reset env")
-            env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
+            env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=True,
                                                   representation='simple115', render=False)
             env = FootballWrapper(env)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
@@ -257,7 +257,7 @@ def worker_test(ps, replay_buffer, opt):
     max_ret = -1000
 
     # ------ env set up ------
-    test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
+    test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=True,
                                                representation='simple115', render=False)
     # test_env = FootballWrapper(test_env)
 
@@ -274,7 +274,7 @@ def worker_test(ps, replay_buffer, opt):
             ep_ret = agent.test(test_env, replay_buffer)
         except Exception:
             print("Error, reset env")
-            test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=False,
+            test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=True,
                                                        representation='simple115', render=False)
             continue
         # ep_ret = agent.test(test_env, replay_buffer)
