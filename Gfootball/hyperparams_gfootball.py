@@ -43,7 +43,7 @@ class HyperParameters:
         self.alpha = 0.1
 
         self.gamma = 0.997
-        self.replay_size = 3000000
+        self.replay_size = 6000000
         # self.lr = 1e-4
         self.lr = 1e-3
         self.polyak = 0.995
