@@ -114,6 +114,13 @@ class Learner(object):
 
             self.sess.run(tf.global_variables_initializer())
 
+            if job == "learner":
+                # Set up summary Ops
+                self.train_ops, self.train_vars = self.build_summaries()
+                self.writer = tf.summary.FileWriter(
+                    opt.summary_dir + "/" + "^^^^^^^^^^" + str(datetime.datetime.now()) + opt.env_name
+                    + "-workers_num:" + str(opt.num_workers) + "%" + str(opt.a_l_ratio), self.sess.graph)
+
             self.variables = ray.experimental.tf_utils.TensorFlowVariables(
                 self.value_loss, self.sess)
 
@@ -127,20 +134,53 @@ class Learner(object):
         values = [weights[key] for key in keys]
         return keys, values
 
-    def train(self, batch):
+    def train(self, batch, cnt):
         feed_dict = {self.x_ph: batch['obs1'],
                      self.x2_ph: batch['obs2'],
                      self.a_ph: batch['acts'],
                      self.r_ph: batch['rews'],
                      self.d_ph: batch['done'],
                      }
-        self.sess.run(self.step_ops, feed_dict)
+        outs = self.sess.run(self.step_ops, feed_dict)
+        summary_str = self.sess.run(self.train_ops, feed_dict={
+            self.train_vars[0]: outs[0],
+            self.train_vars[1]: outs[1],
+            # self.train_vars[2]: outs[2],
+            # self.train_vars[3]: outs[3],
+            # self.train_vars[4]: outs[4],
+            self.train_vars[2]: outs[5],
+        })
+
+        self.writer.add_summary(summary_str, cnt)
+        self.writer.flush()
 
     def compute_gradients(self, x, y):
         pass
 
     def apply_gradients(self, gradients):
         pass
+
+    # Tensorflow Summary Ops
+    def build_summaries(self):
+        train_summaries = []
+        LossQ1 = tf.Variable(0.)
+        train_summaries.append(tf.summary.scalar("LossQ1", LossQ1))
+        LossQ2 = tf.Variable(0.)
+        train_summaries.append(tf.summary.scalar("LossQ2", LossQ2))
+        # Q1Vals = tf.Variable(0.)
+        # train_summaries.append(tf.summary.scalar("Q1Vals", Q1Vals))
+        # Q2Vals = tf.Variable(0.)
+        # train_summaries.append(tf.summary.scalar("Q2Vals", Q2Vals))
+        # LogPi = tf.Variable(0.)
+        # train_summaries.append(tf.summary.scalar("LogPi", LogPi))
+        Alpha = tf.Variable(0.)
+        train_summaries.append(tf.summary.scalar("Alpha", Alpha))
+
+        train_ops = tf.summary.merge(train_summaries)
+        # train_vars = [LossQ1, LossQ2, Q1Vals, Q2Vals, LogPi, Alpha]
+        train_vars = [LossQ1, LossQ2, Alpha]
+
+        return train_ops, train_vars
 
 
 class Actor(object):
@@ -191,7 +231,7 @@ class Actor(object):
         act_op = self.mu if deterministic else self.pi
         return self.sess.run(act_op, feed_dict={self.x_ph: np.expand_dims(o, axis=0)})[0]
 
-    def test(self, test_env, replay_buffer, n=1):
+    def test(self, test_env, replay_buffer, n=25):
         rew = []
         for j in range(n):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0

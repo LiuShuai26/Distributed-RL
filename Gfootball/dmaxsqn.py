@@ -22,7 +22,7 @@ FLAGS = tf.app.flags.FLAGS
 # "Pendulum-v0" 'BipedalWalker-v2' 'LunarLanderContinuous-v2'
 flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
-flags.DEFINE_integer("num_workers", 10, "number of workers")
+flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("is_restore", "False", "True or False. True means restore weights from pickle file.")
 flags.DEFINE_float("a_l_ratio", 2, "steps / sample_times")
@@ -106,8 +106,8 @@ class ParameterServer(object):
         return [self.weights[key] for key in keys]
 
     # save weights to disk
-    def save_weights(self):
-        pickle_out = open("weights.pickle", "wb")
+    def save_weights(self, name):
+        pickle_out = open(name+"weights.pickle", "wb")
         pickle.dump(self.weights, pickle_out)
         pickle_out.close()
 
@@ -165,7 +165,7 @@ def worker_train(ps, replay_buffer, opt, learner_index):
     cnt = 1
     while True:
         batch = cache.q1.get()
-        agent.train(batch)
+        agent.train(batch, cnt)
         if cnt % 300 == 0:
             cache.q2.put(agent.get_weights())
         cnt += 1
@@ -178,9 +178,9 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
     # ------ env set up ------
     # env = gym.make(opt.env_name)
-    env = football_env.create_environment(env_name='11_vs_11_easy_stochastic',
-                                                   with_checkpoints=True, representation='simple115',
-                                                   render=False)
+    env = football_env.create_environment(env_name=opt.env_name,
+                                          with_checkpoints=False, representation='simple115', render=False
+                                          )
     env = FootballWrapper(env)
     # ------ env set up end ------
 
@@ -208,7 +208,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
             o2, r, d, _ = env.step(a)
         except Exception:
             print("Error, reset env")
-            env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=True,
+            env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
                                                   representation='simple115', render=False)
             env = FootballWrapper(env)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
@@ -236,6 +236,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
                 sample_times, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
                 time.sleep(0.1)
 
+            print("reward:", ep_ret)
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             agent.set_weights(keys, weights)
@@ -257,7 +258,7 @@ def worker_test(ps, replay_buffer, opt):
     max_ret = -1000
 
     # ------ env set up ------
-    test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=True,
+    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
                                                representation='simple115', render=False)
     # test_env = FootballWrapper(test_env)
 
@@ -274,19 +275,26 @@ def worker_test(ps, replay_buffer, opt):
             ep_ret = agent.test(test_env, replay_buffer)
         except Exception:
             print("Error, reset env")
-            test_env = football_env.create_environment(env_name='11_vs_11_easy_stochastic', with_checkpoints=True,
+            test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
                                                        representation='simple115', render=False)
             continue
         # ep_ret = agent.test(test_env, replay_buffer)
 
         sample_times2, steps, size, worker_alive = ray.get(replay_buffer.get_counts.remote())
         time2 = time.time()
-        print("test_reward:", ep_ret, "sample_times:", sample_times2, "steps:", steps, "buffer_size:", size,
-              "actual a_l_ratio:", str(steps/(sample_times2+1))[:4], "num of alive worker:", worker_alive)
-        print('update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
-
+        # print("test_reward:", ep_ret, "sample_times:", sample_times2, "steps:", steps, "buffer_size:", size,
+        #       "actual a_l_ratio:", str(steps/(sample_times2+1))[:4], "num of alive worker:", worker_alive)
+        print("----------------------------------")
+        print("| test_reward:", ep_ret)
+        print("| sample_times:", sample_times2)
+        print("| steps:", steps)
+        print("| buffer_size:", size)
+        print("| actual a_l_ratio:", str(steps/(sample_times2+1))[:4])
+        print("| num of alive worker:", worker_alive)
+        print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
+        print("----------------------------------")
         if ep_ret > max_ret:
-            ps.save_weights.remote()
+            ps.save_weights.remote(name="last_")
             print("****** weights saved! ******")
             max_ret = ep_ret
 
@@ -313,18 +321,21 @@ class FootballWrapper(object):
 
     def step(self, action):
         obs, reward, done, info = self._env.step(action)
-        if reward == -1 and reward == 1:
-            done = True
-        else:
-            done = False
+        # if reward == -1 and reward == 1:
+        #     done = True
+        # else:
+        #     done = False
+        if reward < 0:
+            reward = 0
+        reward += -0.01
 
-        return obs, reward, done, info
+        return obs, reward*100, done, info
 
 
 if __name__ == '__main__':
 
-    # ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
-    ray.init()
+    ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
+    # ray.init()
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
 
     # ------ HyperParameters ------
