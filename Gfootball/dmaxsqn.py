@@ -294,7 +294,7 @@ def worker_test(ps, replay_buffer, opt):
         print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
         print("----------------------------------")
         if ep_ret > max_ret:
-            ps.save_weights.remote(name="last_")
+            ps.save_weights.remote(name=str(time0))
             print("****** weights saved! ******")
             max_ret = ep_ret
 
