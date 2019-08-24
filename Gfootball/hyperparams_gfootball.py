@@ -42,10 +42,10 @@ class HyperParameters:
         self.total_epochs = total_epochs
         self.num_workers = num_workers
 
-        self.alpha = 0.1
+        self.alpha = 0.2
 
         self.gamma = 0.99
-        self.replay_size = 2000000
+        self.replay_size = 5000000
         # self.lr = 1e-4
         self.lr = 1e-4
         self.polyak = 0.995
