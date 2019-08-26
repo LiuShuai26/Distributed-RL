@@ -259,7 +259,7 @@ def worker_test(ps, replay_buffer, opt):
     max_ret = -1000
 
     # ------ env set up ------
-    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=True,
+    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
                                                representation='simple115', render=False)
     # test_env = FootballWrapper(test_env)
 
@@ -276,7 +276,7 @@ def worker_test(ps, replay_buffer, opt):
             ep_ret = agent.test(test_env, replay_buffer)
         except Exception:
             print("Error, reset env")
-            test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=True,
+            test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
                                                        representation='simple115', render=False)
             continue
         # ep_ret = agent.test(test_env, replay_buffer)
@@ -340,10 +340,10 @@ if __name__ == '__main__':
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
 
     # ------ HyperParameters ------
-    opt = HyperParameters(FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
-    # opt = HyperParameters(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
-    # ------ end ------
+    opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
 
+    # ------ end ------
+    print(opt.exp_name)
     # Create a parameter server with some random weights.
     if FLAGS.is_restore == "True":
         ps = ParameterServer.remote([], [], is_restore=True)
