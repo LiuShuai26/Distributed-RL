@@ -7,13 +7,14 @@ import gfootball.env as football_env
 
 
 class HyperParameters:
-    def __init__(self, total_epochs, num_workers=1, a_l_ratio=1):
+    def __init__(self, env_name, exp_name, total_epochs, num_workers=1, a_l_ratio=1):
         # parameters set
 
         # ray_servr_address = ""
 
         # self.env_name = 'LunarLanderContinuous-v2'   # 'MountainCarContinuous-v0'
         self.env_name = "academy_3_vs_1_with_keeper"
+        self.exp_name = str(exp_name)
 
         self.a_l_ratio = a_l_ratio
 
@@ -51,7 +52,7 @@ class HyperParameters:
         self.polyak = 0.995
 
         self.steps_per_epoch = 5000
-        self.batch_size = 256
+        self.batch_size = 512
         self.start_steps = 20000
         self.max_ep_len = 190
         self.save_freq = 1

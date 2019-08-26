@@ -51,6 +51,7 @@ for j in range(n):
         o, r, d, _ = test_env.step(action)
         ep_ret += r
         ep_len += 1
+        time.sleep(0.03)
     print("test reward:", ep_ret, ep_len)
     rew.append(ep_ret)
 print("ave test_reward:", sum(rew)/n)

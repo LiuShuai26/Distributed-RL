@@ -21,6 +21,7 @@ FLAGS = tf.app.flags.FLAGS
 
 # "Pendulum-v0" 'BipedalWalker-v2' 'LunarLanderContinuous-v2'
 flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
+flags.DEFINE_string("exp_name", "c=T,b=256", "experiments name")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
@@ -294,7 +295,7 @@ def worker_test(ps, replay_buffer, opt):
         print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
         print("----------------------------------")
         if ep_ret > max_ret:
-            ps.save_weights.remote(name=str(time0))
+            ps.save_weights.remote(name=opt.exp_name)
             print("****** weights saved! ******")
             max_ret = ep_ret
 
@@ -339,7 +340,7 @@ if __name__ == '__main__':
     print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
 
     # ------ HyperParameters ------
-    opt = HyperParameters(FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
+    opt = HyperParameters(FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
     # opt = HyperParameters(FLAGS.env_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
     # ------ end ------
 
