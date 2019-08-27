@@ -21,7 +21,7 @@ FLAGS = tf.app.flags.FLAGS
 
 # "Pendulum-v0" 'BipedalWalker-v2' 'LunarLanderContinuous-v2'
 flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
-flags.DEFINE_string("exp_name", "c=T,b=256", "experiments name")
+flags.DEFINE_string("exp_name", "c=Tb=256", "experiments name")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
@@ -72,7 +72,6 @@ class ReplayBuffer:
 
     def empty_worker_pool(self):
         self.worker_pool = set()
-
 
 
 @ray.remote

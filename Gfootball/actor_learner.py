@@ -65,7 +65,8 @@ class Learner(object):
             # ------
 
             # Min Double-Q:
-            min_q_pi = tf.minimum(q1_mu_, q2_mu_)
+            # min_q_pi = tf.minimum(q1_mu_, q2_mu_)
+            min_q_pi = tf.minimum(q1_pi_, q2_pi_)
 
             # Targets for Q and V regression
             v_backup = tf.stop_gradient(min_q_pi - opt.alpha * logp_pi2)  # alpha=0
