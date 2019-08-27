@@ -142,13 +142,14 @@ class Learner(object):
                      self.d_ph: batch['done'],
                      }
         outs = self.sess.run(self.step_ops, feed_dict)
+
         summary_str = self.sess.run(self.train_ops, feed_dict={
             self.train_vars[0]: outs[0],
             self.train_vars[1]: outs[1],
-            # self.train_vars[2]: outs[2],
-            # self.train_vars[3]: outs[3],
-            # self.train_vars[4]: outs[4],
-            self.train_vars[2]: outs[5],
+            self.train_vars[2]: np.mean(outs[2]),
+            self.train_vars[3]: np.mean(outs[3]),
+            self.train_vars[4]: np.mean(outs[4]),
+            self.train_vars[5]: outs[5],
         })
 
         self.writer.add_summary(summary_str, cnt)
@@ -167,18 +168,18 @@ class Learner(object):
         train_summaries.append(tf.summary.scalar("LossQ1", LossQ1))
         LossQ2 = tf.Variable(0.)
         train_summaries.append(tf.summary.scalar("LossQ2", LossQ2))
-        # Q1Vals = tf.Variable(0.)
-        # train_summaries.append(tf.summary.scalar("Q1Vals", Q1Vals))
-        # Q2Vals = tf.Variable(0.)
-        # train_summaries.append(tf.summary.scalar("Q2Vals", Q2Vals))
-        # LogPi = tf.Variable(0.)
-        # train_summaries.append(tf.summary.scalar("LogPi", LogPi))
+        Q1Vals = tf.Variable(0.)
+        train_summaries.append(tf.summary.scalar("Q1Vals", Q1Vals))
+        Q2Vals = tf.Variable(0.)
+        train_summaries.append(tf.summary.scalar("Q2Vals", Q2Vals))
+        LogPi = tf.Variable(0.)
+        train_summaries.append(tf.summary.scalar("LogPi", LogPi))
         Alpha = tf.Variable(0.)
         train_summaries.append(tf.summary.scalar("Alpha", Alpha))
 
         train_ops = tf.summary.merge(train_summaries)
-        # train_vars = [LossQ1, LossQ2, Q1Vals, Q2Vals, LogPi, Alpha]
-        train_vars = [LossQ1, LossQ2, Alpha]
+        train_vars = [LossQ1, LossQ2, Q1Vals, Q2Vals, LogPi, Alpha]
+        # train_vars = [LossQ1, LossQ2, Alpha]
 
         return train_ops, train_vars
 

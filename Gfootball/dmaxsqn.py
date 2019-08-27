@@ -180,7 +180,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     # ------ env set up ------
     # env = gym.make(opt.env_name)
     env = football_env.create_environment(env_name=opt.env_name,
-                                          with_checkpoints=True, representation='simple115', render=False
+                                          with_checkpoints=False, representation='simple115', render=False
                                           )
     env = FootballWrapper(env)
     # ------ env set up end ------
@@ -209,7 +209,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
             o2, r, d, _ = env.step(a)
         except Exception:
             print("Error, reset env")
-            env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=True,
+            env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
                                                   representation='simple115', render=False)
             env = FootballWrapper(env)
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
@@ -326,6 +326,12 @@ class FootballWrapper(object):
         #     done = True
         # else:
         #     done = False
+        who_controls_ball = obs[7:9]
+        pos_ball = obs[0]
+        distance_to_goal = np.array([(pos_ball + 1) / 2.0, (pos_ball - 1) / 2.0])
+
+        reward += np.dot(who_controls_ball, distance_to_goal) * 0.003
+
         if reward < 0:
             reward = 0
         reward += -0.005
@@ -343,7 +349,7 @@ if __name__ == '__main__':
     opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
 
     # ------ end ------
-    print(opt.exp_name)
+
     # Create a parameter server with some random weights.
     if FLAGS.is_restore == "True":
         ps = ParameterServer.remote([], [], is_restore=True)
