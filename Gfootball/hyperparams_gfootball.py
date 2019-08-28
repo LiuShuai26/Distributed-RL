@@ -10,11 +10,16 @@ class HyperParameters:
     def __init__(self, env_name, exp_name, total_epochs, num_workers=1, a_l_ratio=1):
         # parameters set
 
-        # ray_servr_address = ""
-
-        # self.env_name = 'LunarLanderContinuous-v2'   # 'MountainCarContinuous-v0'
         self.env_name = "academy_3_vs_1_with_keeper"
+        self.rollout_env_name = self.env_name
         self.exp_name = str(exp_name)
+
+        self.env_random = True
+
+        if self.env_random:
+            self.rollout_env_name = self.env_name + "_random"
+
+        self.with_checkpoints = False
 
         self.a_l_ratio = a_l_ratio
 
@@ -43,16 +48,16 @@ class HyperParameters:
         self.total_epochs = total_epochs
         self.num_workers = num_workers
 
-        self.alpha = 0.2
+        self.alpha = 0.1
 
         self.gamma = 0.997
-        self.replay_size = 5000000
-        # self.lr = 1e-4
+        self.replay_size = 3000000
+
         self.lr = 1e-4
         self.polyak = 0.995
 
         self.steps_per_epoch = 5000
-        self.batch_size = 512
+        self.batch_size = 256
         self.start_steps = 20000
         self.max_ep_len = 190
         self.save_freq = 1
@@ -60,4 +65,4 @@ class HyperParameters:
         self.seed = 0
 
         self.summary_dir = './tboard_ray'  # Directory for storing tensorboard summary results
-        self.save_dir = './model_ray'      # Directory for storing trained model
+        self.save_dir = './' + exp_name    # Directory for storing trained model
