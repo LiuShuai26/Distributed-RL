@@ -5,7 +5,7 @@ import ray
 import gym
 from gym.spaces import Box, Discrete
 
-from hyperparams_gfootball import HyperParameters
+from hyperparams_gfootball import HyperParameters, FootballWrapper
 from actor_learner import Actor, Learner
 
 import os
@@ -17,6 +17,7 @@ import signal
 import inspect
 import json
 
+import gfootball
 import gfootball.env as football_env
 
 flags = tf.app.flags
@@ -182,7 +183,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     # ------ env set up ------
     # env = gym.make(opt.env_name)
     env = football_env.create_environment(env_name=opt.rollout_env_name, with_checkpoints=opt.with_checkpoints,
-                                          representation='simple115', render=True)
+                                          representation='simple115', render=False)
     env = FootballWrapper(env)
     # ------ env set up end ------
 
@@ -314,28 +315,6 @@ def worker_test(ps, replay_buffer, opt):
         time.sleep(5)
 
 
-# reward wrapper
-class FootballWrapper(object):
-
-    def __init__(self, env):
-        self._env = env
-
-    def __getattr__(self, name):
-        return getattr(self._env, name)
-
-    def step(self, action):
-        obs, reward, done, info = self._env.step(action)
-
-        if obs[0] <= 0:
-            done = True
-
-        if reward < 0:
-            reward = 0
-        reward += obs[0]*0.001
-
-        return obs, reward*200, done, info
-
-
 if __name__ == '__main__':
 
     ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
@@ -346,18 +325,19 @@ if __name__ == '__main__':
     opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
     All_Parameters = copy.deepcopy(vars(opt))
     All_Parameters["wrapper"] = inspect.getsource(FootballWrapper)
+    import importlib
+    scenario = importlib.import_module('gfootball.scenarios.{}'.format(opt.rollout_env_name))
+    All_Parameters["rollout_env_class"] = inspect.getsource(scenario.build_scenario)
     All_Parameters["ac_kwargs"]['action_space'] = ""
     All_Parameters["obs_space"] = ""
     All_Parameters["act_space"] = ""
-
-    print(opt.ac_kwargs)
 
     try:
         os.makedirs(opt.save_dir)
     except OSError:
         pass
     with open(opt.save_dir + "/" + 'All_Parameters.json', 'w') as fp:
-        json.dump(All_Parameters, fp)
+        json.dump(All_Parameters, fp, indent=4, sort_keys=True)
 
     # ------ end ------
 
