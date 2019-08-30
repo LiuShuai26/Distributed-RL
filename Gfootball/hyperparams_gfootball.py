@@ -53,7 +53,7 @@ class HyperParameters:
 
         # self.alpha = 0.1
         self.alpha = "auto"
-        self.target_entropy = 0.4
+        self.target_entropy = 0.5
 
         self.gamma = 0.997
         self.replay_size = 3000000
@@ -69,8 +69,10 @@ class HyperParameters:
 
         self.seed = 0
 
-        self.summary_dir = './tboard_ray'  # Directory for storing tensorboard summary results
-        self.save_dir = './' + exp_name    # Directory for storing trained model
+        cwd = os.getcwd()
+
+        self.summary_dir = cwd + '/tboard_ray'  # Directory for storing tensorboard summary results
+        self.save_dir = cwd + '/' + self.exp_name    # Directory for storing trained model
 
 
 # reward wrapper
