@@ -11,16 +11,10 @@ class HyperParameters:
         # parameters set
 
         self.env_name = "academy_3_vs_1_with_keeper"
-        self.rollout_env_name = self.env_name
+
+        # "_random", "_d_True", ""
+        self.rollout_env_name = self.env_name + ""
         self.exp_name = str(exp_name)
-
-        self.env_random = False
-        self.deterministic = True
-
-        if self.env_random:
-            self.rollout_env_name = self.env_name + "_random"
-        if self.deterministic:
-            self.rollout_env_name = self.env_name + "_d_True"
 
         self.with_checkpoints = False
 
