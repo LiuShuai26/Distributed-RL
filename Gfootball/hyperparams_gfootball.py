@@ -48,8 +48,8 @@ class HyperParameters:
         self.total_epochs = total_epochs
         self.num_workers = num_workers
 
-        # self.alpha = 0.1
-        self.alpha = "auto"
+        self.alpha = 0.1
+        # self.alpha = "auto"
         self.target_entropy = 0.5
 
         self.gamma = 0.997
@@ -93,6 +93,6 @@ class FootballWrapper(object):
             r += reward
 
             if done:
-                return obs, r * 200, done, info
+                return obs, r * 150, done, info
 
-        return obs, r * 200, done, info
+        return obs, r * 150, done, info
