@@ -18,6 +18,9 @@ class HyperParameters:
 
         self.with_checkpoints = False
 
+        self.representation = 'extracted'
+        self.stacked = "True"
+
         self.a_l_ratio = a_l_ratio
 
         # gpu memory fraction
@@ -26,16 +29,16 @@ class HyperParameters:
         self.ac_kwargs = dict(hidden_sizes=[600, 400, 200])
 
         env_football = football_env.create_environment(env_name=self.env_name,
-                                                       with_checkpoints=False, representation='simple115',
-                                                       render=False)
+                                                       with_checkpoints=self.with_checkpoints, stacked=self.stacked,
+                                                       representation=self.representation, render=False)
 
         # env = FootballWrapper(env_football)
         env = env_football
 
-        # self.obs_dim = env.observation_space.shape[0]
-        self.obs_dim = 51
-        # self.obs_space = env.observation_space
-        self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
+        self.obs_dim = env.observation_space.shape
+        # self.obs_dim = 51
+        self.obs_space = env.observation_space
+        # self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
         self.act_dim = env.action_space.n
         self.act_space = env.action_space
 
@@ -50,7 +53,7 @@ class HyperParameters:
         self.target_entropy = 0.5
 
         self.gamma = 0.997
-        self.replay_size = 3000000
+        self.replay_size = 100000
 
         self.lr = 1e-4
         self.polyak = 0.995
@@ -83,8 +86,8 @@ class FootballWrapper(object):
         for _ in range(1):
             obs, reward, done, info = self._env.step(action)
 
-            if obs[0] < 0.0:
-                done = True
+            # if obs[0] < 0.0:
+            #     done = True
             if reward < 0:
                 reward = 0
             r += reward

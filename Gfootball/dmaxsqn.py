@@ -40,8 +40,8 @@ class ReplayBuffer:
     """
 
     def __init__(self, obs_dim, act_dim, size):
-        self.obs1_buf = np.zeros([size, obs_dim], dtype=np.float32)
-        self.obs2_buf = np.zeros([size, obs_dim], dtype=np.float32)
+        self.obs1_buf = np.zeros((size,) + obs_dim, dtype=np.float32)
+        self.obs2_buf = np.zeros((size,) + obs_dim, dtype=np.float32)
         self.acts_buf = np.zeros([size, act_dim], dtype=np.float32)
         self.rews_buf = np.zeros(size, dtype=np.float32)
         self.done_buf = np.zeros(size, dtype=np.float32)
@@ -186,7 +186,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     # ------ env set up ------
     # env = gym.make(opt.env_name)
     env = football_env.create_environment(env_name=opt.rollout_env_name, with_checkpoints=opt.with_checkpoints,
-                                          representation='simple115', render=False)
+                                          stacked=opt.stacked, representation=opt.representation, render=False)
     env = FootballWrapper(env)
     # ------ env set up end ------
 
@@ -210,15 +210,8 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
             a = env.action_space.sample()
             t += 1
         # Step the env
-        try:
-            o2, r, d, _ = env.step(a)
-        except Exception:
-            print("Error, reset env")
-            env = football_env.create_environment(env_name=opt.rollout_env_name, with_checkpoints=opt.with_checkpoints,
-                                                  representation='simple115', render=False)
-            env = FootballWrapper(env)
-            o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
-            continue
+        o2, r, d, _ = env.step(a)
+
         ep_ret += r
         ep_len += 1
 
@@ -265,8 +258,8 @@ def worker_test(ps, replay_buffer, opt):
     max_sample_times = 0
 
     # ------ env set up ------
-    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
-                                               representation='simple115', render=False)
+    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=opt.with_checkpoints,
+                                               stacked=opt.stacked, representation=opt.representation, render=False)
     # test_env = FootballWrapper(test_env)
 
     # test_env = gym.make(opt.env_name)
@@ -280,13 +273,9 @@ def worker_test(ps, replay_buffer, opt):
         agent.set_weights(keys, weights)
 
         # In case the env crushed
-        try:
-            ep_ret = agent.test(test_env, replay_buffer)
-        except Exception:
-            print("Error, reset env")
-            test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=False,
-                                                       representation='simple115', render=False)
-            continue
+
+        ep_ret = agent.test(test_env, replay_buffer)
+
         # ep_ret = agent.test(test_env, replay_buffer)
 
         sample_times2, steps, size, worker_alive = ray.get(replay_buffer.get_counts.remote())

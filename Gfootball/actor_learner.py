@@ -16,7 +16,7 @@ import ray.experimental.tf_utils
 
 import core
 from core import get_vars
-from core import mlp_actor_critic as actor_critic
+from core import actor_critic
 
 
 class Learner(object):
