@@ -4,6 +4,7 @@ import sys
 from gym.spaces import Box
 import datetime
 import gfootball.env as football_env
+from numbers import Number
 
 
 class HyperParameters:
@@ -18,8 +19,9 @@ class HyperParameters:
 
         self.with_checkpoints = False
 
-        self.representation = 'extracted'
-        self.stacked = "True"
+        self.representation = 'simple115'
+        self.stacked = False
+        self.model = "mlp"
 
         self.a_l_ratio = a_l_ratio
 
@@ -36,9 +38,16 @@ class HyperParameters:
         env = env_football
 
         self.obs_dim = env.observation_space.shape
+
         # self.obs_dim = 51
         self.obs_space = env.observation_space
         # self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
+        # TODO gfootball 1.3
+        if len(self.obs_dim) == 1 and self.env_name == "academy_3_vs_1_with_keeper":
+            # self.obs_dim = (self.obs_dim,)
+            self.obs_dim = (51, )
+            self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
+
         self.act_dim = env.action_space.n
         self.act_space = env.action_space
 

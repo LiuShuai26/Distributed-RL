@@ -89,16 +89,18 @@ Actor-Critics
 
 
 def actor_critic(x, x2,  a, alpha, hidden_sizes=(400,300), activation=tf.nn.relu,
-                     output_activation=None, policy=softmax_policy, action_space=None):
+                     output_activation=None, policy=softmax_policy, action_space=None, model="mlp"):
 
     if x.shape[1] == 128:                # for Breakout-ram-v4
         x = (x - 128.0) / 128.0          # x: shape(?,128)
 
     act_dim = action_space.n
     a_one_hot = tf.one_hot(a[..., 0], depth=act_dim)      # shape(?,4)
-    #vfs
-    # vf_mlp = lambda x: mlp(x, list(hidden_sizes) + [act_dim], activation, None)     # return: shape(?,4)
-    vf_model = lambda x: nature_cnn(x)
+    #vfs TODO might not good
+    if model == "mlp":
+        vf_model = lambda x: mlp(x, list(hidden_sizes) + [act_dim], activation, None)     # return: shape(?,4)
+    else:
+        vf_model = lambda x: nature_cnn(x)
 
     # Q1
 
