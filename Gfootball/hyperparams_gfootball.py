@@ -94,10 +94,9 @@ class FootballWrapper(object):
         r = 0.0
         for _ in range(1):
             obs, reward, done, info = self._env.step(action)
-
-            if self.representation == 'simple115':
-                if obs[0] < 0.0:
-                    done = True
+            # TODO
+            if obs[0] < 0.0:
+                done = True
             if reward < 0:
                 reward = 0
             r += reward
