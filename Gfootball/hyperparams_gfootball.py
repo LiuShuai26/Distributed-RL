@@ -8,7 +8,7 @@ from numbers import Number
 
 
 class HyperParameters:
-    def __init__(self, env_name, exp_name, total_epochs, num_workers=1, a_l_ratio=1):
+    def __init__(self, env_name, exp_name, total_epochs, num_workers, a_l_ratio):
         # parameters set
 
         self.env_name = "academy_3_vs_1_with_keeper"
@@ -62,7 +62,7 @@ class HyperParameters:
         self.target_entropy = 0.5
 
         self.gamma = 0.997
-        self.replay_size = 100000
+        self.replay_size = 2000000
 
         self.lr = 1e-4
         self.polyak = 0.995

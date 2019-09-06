@@ -30,7 +30,7 @@ flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("is_restore", "False", "True or False. True means restore weights from pickle file.")
-flags.DEFINE_float("a_l_ratio", 2, "steps / sample_times")
+flags.DEFINE_float("a_l_ratio", 200, "steps / sample_times")
 
 
 @ray.remote
@@ -357,7 +357,12 @@ if __name__ == '__main__':
     # Start some training tasks.
     task_rollout = [worker_rollout.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
 
-    time.sleep(20)
+    # store at least start_steps in buffer before training
+    _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
+    while steps < opt.start_steps:
+        _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
+        print(steps)
+        time.sleep(1)
 
     task_train = [worker_train.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
