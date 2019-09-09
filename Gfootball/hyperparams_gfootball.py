@@ -30,8 +30,7 @@ class HyperParameters:
 
         self.ac_kwargs = dict(hidden_sizes=[600, 400, 200])
 
-        env_football = football_env.create_environment(env_name=self.env_name,
-                                                       with_checkpoints=self.with_checkpoints, stacked=self.stacked,
+        env_football = football_env.create_environment(env_name=self.env_name, stacked=self.stacked,
                                                        representation=self.representation, render=False)
 
         # env = FootballWrapper(env_football)
@@ -43,10 +42,10 @@ class HyperParameters:
         self.obs_space = env.observation_space
         # self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
         # TODO gfootball 1.3
-        if len(self.obs_dim) == 1 and self.env_name == "academy_3_vs_1_with_keeper":
-            # self.obs_dim = (self.obs_dim,)
-            self.obs_dim = (51, )
-            self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
+        # if len(self.obs_dim) == 1 and self.env_name == "academy_3_vs_1_with_keeper":
+        #     # self.obs_dim = (self.obs_dim,)
+        #     self.obs_dim = (51, )
+        #     self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
 
         self.act_dim = env.action_space.n
         self.act_space = env.action_space
