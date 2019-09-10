@@ -50,13 +50,18 @@ class HyperParameters:
         #     self.obs_dim = (51, )
         #     self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
         #
-        # self.act_dim = env.action_space.n
-        # self.act_space = env.action_space
+        self.act_dim = env.action_space.n
+        self.act_space = env.action_space
+
+        self.obs_dim = env.observation_space.shape
+
+        # self.obs_dim = 51
+        self.obs_space = env.observation_space
 
         scenario_obsdim = {'academy_empty_goal': 32, 'academy_empty_goal_random': 32, 'academy_3_vs_1_with_keeper': 51,
                            'academy_3_vs_1_with_keeper_random': 51, 'academy_single_goal_versus_lazy': 108}
-        self.obs_dim = scenario_obsdim[self.env_name]
-        self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
+        # self.obs_dim = scenario_obsdim[self.env_name]
+        # self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
 
         self.o_shape = self.obs_space.shape
 
