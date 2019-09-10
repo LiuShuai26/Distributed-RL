@@ -185,7 +185,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
     # ------ env set up ------
     # env = gym.make(opt.env_name)
-    env = football_env.create_environment(env_name=opt.rollout_env_name, with_checkpoints=opt.with_checkpoints,
+    env = football_env.create_environment(env_name=opt.rollout_env_name,
                                           stacked=opt.stacked, representation=opt.representation, render=False)
     env = FootballWrapper(env)
     # ------ env set up end ------
@@ -258,7 +258,7 @@ def worker_test(ps, replay_buffer, opt):
     max_sample_times = 0
 
     # ------ env set up ------
-    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=opt.with_checkpoints,
+    test_env = football_env.create_environment(env_name=opt.env_name,
                                                stacked=opt.stacked, representation=opt.representation, render=False)
     # test_env = FootballWrapper(test_env)
 
