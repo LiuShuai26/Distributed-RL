@@ -50,10 +50,10 @@ class HyperParameters:
         #     self.obs_dim = (51, )
         #     self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
         #
-        self.act_dim = env.action_space.n
-        self.act_space = env.action_space
+        # self.act_dim = env.action_space.n
+        # self.act_space = env.action_space
 
-        self.obs_dim = env.observation_space.shape
+        self.obs_dim = env.observation_space.shape[0]
 
         # self.obs_dim = 51
         self.obs_space = env.observation_space
