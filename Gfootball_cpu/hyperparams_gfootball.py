@@ -33,7 +33,7 @@ class HyperParameters:
         self.ac_kwargs = dict(hidden_sizes=[600, 400, 200])
 
         env_football = football_env.create_environment(env_name=self.env_name,
-                                                       with_checkpoints=self.with_checkpoints, stacked=self.stacked,
+                                                       stacked=self.stacked,
                                                        representation=self.representation, render=False)
 
         # env = FootballWrapper(env_football)
