@@ -62,6 +62,7 @@ class HyperParameters:
 
         self.act_dim = env.action_space.n
         self.act_space = env.action_space
+
         self.a_shape = self.act_space.shape
 
         # Share information about action space with policy architecture

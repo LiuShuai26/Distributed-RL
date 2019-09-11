@@ -64,8 +64,8 @@ class Learner(object):
             # ------
 
             # Min Double-Q:
-            # min_q_pi = tf.minimum(q1_mu_, q2_mu_)
-            min_q_pi = tf.minimum(q1_pi_, q2_pi_)
+            min_q_pi = tf.minimum(q1_mu_, q2_mu_)
+            # min_q_pi = tf.minimum(q1_pi_, q2_pi_)
 
             # Targets for Q and V regression
             # v_backup = tf.stop_gradient(min_q_pi - alpha_v * logp_pi2)
@@ -166,7 +166,10 @@ class Learner(object):
         # else:
         #     outs = self.sess.run(self.step_ops_notraining, feed_dict)
 
-        outs = self.sess.run(self.step_ops_notraining, feed_dict)
+        if cnt > 20000:
+            outs = self.sess.run(self.step_ops, feed_dict)
+        else:
+            outs = self.sess.run(self.step_ops_notraining, feed_dict)
 
         summary_str = self.sess.run(self.train_ops, feed_dict={
             self.train_vars[0]: outs[0],

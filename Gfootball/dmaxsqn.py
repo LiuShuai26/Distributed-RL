@@ -92,8 +92,7 @@ class ParameterServer(object):
         else:
             values = [value.copy() for value in values]
             self.weights = dict(zip(keys, values))
-        print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-        print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
+
     # def push(self, keys, values):
     #     for key, value in zip(keys, values):
     #         self.weights[key] += value
