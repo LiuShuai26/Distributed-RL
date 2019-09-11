@@ -33,7 +33,7 @@ class HyperParameters:
         self.ac_kwargs = dict(hidden_sizes=[600, 400, 200])
 
         env_football = football_env.create_environment(env_name=self.env_name,
-                                                       with_checkpoints=self.with_checkpoints, stacked=self.stacked,
+                                                       stacked=self.stacked,
                                                        representation=self.representation, render=False)
 
         # env = FootballWrapper(env_football)
@@ -108,8 +108,8 @@ class FootballWrapper(object):
         for _ in range(1):
             obs, reward, done, info = self._env.step(action)
             # TODO
-            if obs[0] < 0.0:
-                done = True
+            # if obs[0] < 0.0:
+            #     done = True
             if reward < 0:
                 reward = 0
             r += reward

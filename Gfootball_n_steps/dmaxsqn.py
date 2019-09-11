@@ -49,8 +49,6 @@ class ReplayBuffer:
         self.ptr, self.size, self.max_size = 0, 0, size
         self.steps, self.sample_times = 0, 0
         self.worker_pool = set()
-        print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-        print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     def store(self, obs, act, rew, next_obs, done, worker_index):
         self.obs1_buf[self.ptr] = obs
@@ -140,8 +138,6 @@ class ParameterServer(object):
         else:
             values = [value.copy() for value in values]
             self.weights = dict(zip(keys, values))
-        print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-        print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
     # def push(self, keys, values):
     #     for key, value in zip(keys, values):
     #         self.weights[key] += value
@@ -226,12 +222,10 @@ def worker_train(ps, replay_buffer, opt, learner_index):
 
 @ray.remote
 def worker_rollout(ps, replay_buffer, opt, worker_index):
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     # ------ env set up ------
     # env = gym.make(opt.env_name)
-    env = football_env.create_environment(env_name=opt.rollout_env_name, with_checkpoints=opt.with_checkpoints,
+    env = football_env.create_environment(env_name=opt.rollout_env_name,
                                           stacked=opt.stacked, representation=opt.representation, render=False)
     env = FootballWrapper(env)
     # ------ env set up end ------
@@ -328,8 +322,6 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
 @ray.remote
 def worker_test(ps, replay_buffer, opt):
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     agent = Actor(opt, job="main")
 
@@ -341,7 +333,7 @@ def worker_test(ps, replay_buffer, opt):
     max_sample_times = 0
 
     # ------ env set up ------
-    test_env = football_env.create_environment(env_name=opt.env_name, with_checkpoints=opt.with_checkpoints,
+    test_env = football_env.create_environment(env_name=opt.env_name,
                                                stacked=opt.stacked, representation=opt.representation, render=False)
     # test_env = FootballWrapper(test_env)
 
@@ -445,6 +437,8 @@ if __name__ == '__main__':
 
     task_train = [worker_train.remote(ps, replay_buffer_nstep, opt, i) for i in range(FLAGS.num_learners)]
 
-    task_test = worker_test.remote(ps, replay_buffer_nstep, opt)
+    while True:
+        task_test = worker_test.remote(ps, replay_buffer_nstep, opt)
+        ray.wait([task_test, ])
 
-    ray.wait([task_test, ])
+    # ray.wait([task_test, ])
