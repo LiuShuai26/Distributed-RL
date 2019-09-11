@@ -61,7 +61,7 @@ class HyperParameters:
         self.target_entropy = 0.5
 
         self.gamma = 0.997
-        self.replay_size = 2000000
+        self.replay_size = 3000000
 
         self.lr = 1e-4
         self.polyak = 0.995
@@ -91,11 +91,10 @@ class FootballWrapper(object):
 
     def step(self, action):
         r = 0.0
-        for _ in range(1):
+        for _ in range(3):
             obs, reward, done, info = self._env.step(action)
-            # TODO
-            if obs[0] < 0.0:
-                done = True
+            # if obs[0] < 0.0:
+            #     done = True
             if reward < 0:
                 reward = 0
             r += reward
