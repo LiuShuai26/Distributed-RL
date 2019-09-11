@@ -48,8 +48,6 @@ class ReplayBuffer:
         self.ptr, self.size, self.max_size = 0, 0, size
         self.steps, self.sample_times = 0, 0
         self.worker_pool = set()
-        print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-        print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     def store(self, obs, act, rew, next_obs, done, worker_index):
         self.obs1_buf[self.ptr] = obs
@@ -151,8 +149,6 @@ class Cache(object):
 
 @ray.remote(num_gpus=1, max_calls=1)
 def worker_train(ps, replay_buffer, opt, learner_index):
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     agent = Learner(opt, job="learner")
     keys = agent.get_weights()[0]
@@ -313,7 +309,6 @@ if __name__ == '__main__':
 
     ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
     # ray.init()
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
 
     # ------ HyperParameters ------
     opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
@@ -348,6 +343,7 @@ if __name__ == '__main__':
         a_dim = opt.act_dim
     elif isinstance(opt.act_space, Discrete):
         a_dim = 1
+
     replay_buffer = ReplayBuffer.remote(obs_dim=opt.obs_dim, act_dim=a_dim, size=opt.replay_size)
 
     # Start some training tasks.

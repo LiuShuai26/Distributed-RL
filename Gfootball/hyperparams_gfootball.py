@@ -89,6 +89,12 @@ class FootballWrapper(object):
     def __getattr__(self, name):
         return getattr(self._env, name)
 
+    def reset(self):
+        o = self._env.reset()
+        obs = np.concatenate((o[:24], o[88:]))
+        return obs
+
+
     def step(self, action):
         r = 0.0
         for _ in range(3):
