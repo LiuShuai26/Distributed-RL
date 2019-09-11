@@ -431,11 +431,7 @@ if __name__ == '__main__':
         ps = ParameterServer.remote(all_keys, all_values)
 
     # Experience buffer
-    if isinstance(opt.act_space, Box):
-        a_dim = opt.act_dim
-    elif isinstance(opt.act_space, Discrete):
-        a_dim = 1
-    replay_buffer_nstep= ReplayBuffer_N.remote(Ln=opt.Ln, obs_shape=opt.o_shape, act_shape=opt.a_shape, size=opt.replay_size)
+    replay_buffer_nstep = ReplayBuffer_N.remote(Ln=opt.Ln, obs_shape=opt.o_shape, act_shape=opt.a_shape, size=opt.replay_size)
 
     # Start some training tasks.
     task_rollout = [worker_rollout.remote(ps, replay_buffer_nstep, opt, i) for i in range(FLAGS.num_workers)]

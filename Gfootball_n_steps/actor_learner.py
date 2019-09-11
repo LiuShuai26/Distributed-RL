@@ -27,12 +27,10 @@ class Learner(object):
             np.random.seed(opt.seed)
 
             # Inputs to computation graph
-            self.x_ph, self.a_ph, self.x2_ph, self.r_ph, self.d_ph = \
-                core.placeholders(opt.o_shape, opt.a_shape, opt.o_shape, None, None)
+            self.x_ph, self.a_ph, self.x2_ph = core.placeholders(opt.o_shape, opt.a_shape, opt.o_shape)
             self.r_ph, self.d_ph, self.logp_pi_ph = core.placeholders((opt.Ln,), (opt.Ln,), (opt.Ln,))
 
             # ------
-            # TODO BUG: TypeError: can't pickle _thread.RLock objects
             if opt.alpha == 'auto':
                 log_alpha = tf.get_variable('log_alpha', dtype=tf.float32, initializer=0.0)
                 alpha_v = tf.exp(log_alpha)
@@ -48,7 +46,7 @@ class Learner(object):
 
             # Target value network
             with tf.variable_scope('target'):
-                _, _, logp_pi_, _,  _, _,q1_pi_, q2_pi_,q1_mu_, q2_mu_= \
+                _, _, logp_pi_, _,  _, _, q1_pi_, q2_pi_, q1_mu_, q2_mu_ = \
                     actor_critic(self.x2_ph, self.x2_ph, self.a_ph, alpha_v,
                                  action_space=opt.ac_kwargs['action_space'], model=opt.model)
 

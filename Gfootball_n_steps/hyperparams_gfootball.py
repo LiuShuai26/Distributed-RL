@@ -23,7 +23,7 @@ class HyperParameters:
         self.stacked = False
         self.model = "mlp"
 
-        self.Ln = 3
+        self.Ln = 1
 
         self.a_l_ratio = a_l_ratio
 

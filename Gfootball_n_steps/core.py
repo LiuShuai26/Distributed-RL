@@ -27,7 +27,7 @@ def placeholder_from_space(space):
     if space is None:
         return tf.placeholder(dtype=tf.float32,shape=(None,))
     if isinstance(space, Box):
-        return tf.placeholder(dtype=tf.float32, shape=(None,) + space.shape)
+        return tf.placeholder(dtype=tf.float32, shape=(None, space.shape[0]))
     elif isinstance(space, Discrete):
         return tf.placeholder(dtype=tf.int32, shape=(None,1))
     raise NotImplementedError
