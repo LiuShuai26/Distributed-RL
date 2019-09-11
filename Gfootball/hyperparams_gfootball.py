@@ -42,10 +42,10 @@ class HyperParameters:
         self.obs_space = env.observation_space
         # self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
         # TODO gfootball 1.3
-        # if len(self.obs_dim) == 1 and self.env_name == "academy_3_vs_1_with_keeper":
-        #     # self.obs_dim = (self.obs_dim,)
-        #     self.obs_dim = (51, )
-        #     self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
+        if len(self.obs_dim) == 1 and self.env_name == "academy_3_vs_1_with_keeper":
+            # self.obs_dim = (self.obs_dim,)
+            self.obs_dim = (51, )
+            self.obs_space = Box(low=-1.0, high=1.0, shape=(51,), dtype=np.float32)
 
         self.act_dim = env.action_space.n
         self.act_space = env.action_space
@@ -92,9 +92,10 @@ class FootballWrapper(object):
     def step(self, action):
         r = 0.0
         for _ in range(3):
-            obs, reward, done, info = self._env.step(action)
-            # if obs[0] < 0.0:
-            #     done = True
+            old_obs, reward, done, info = self._env.step(action)
+            obs = np.concatenate((old_obs[:24], old_obs[88:]))
+            if obs[24] < 0.0:
+                done = True
             if reward < 0:
                 reward = 0
             r += reward
@@ -103,3 +104,8 @@ class FootballWrapper(object):
                 return obs, r * 150, done, info
 
         return obs, r * 150, done, info
+
+    def test_step(self, action):
+        old_obs, reward, done, info = self._env.step(action)
+        obs = np.concatenate((old_obs[:24], old_obs[88:]))
+        return obs, reward, done, info

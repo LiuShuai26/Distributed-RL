@@ -180,8 +180,6 @@ def worker_train(ps, replay_buffer, opt, learner_index):
 
 @ray.remote
 def worker_rollout(ps, replay_buffer, opt, worker_index):
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     # ------ env set up ------
     # env = gym.make(opt.env_name)
@@ -245,8 +243,6 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
 @ray.remote
 def worker_test(ps, replay_buffer, opt):
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
-    print("CUDA_VISIBLE_DEVICES: {}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
 
     agent = Actor(opt, job="main")
 
@@ -260,7 +256,7 @@ def worker_test(ps, replay_buffer, opt):
     # ------ env set up ------
     test_env = football_env.create_environment(env_name=opt.env_name,
                                                stacked=opt.stacked, representation=opt.representation, render=False)
-    # test_env = FootballWrapper(test_env)
+    test_env = FootballWrapper(test_env)
 
     # test_env = gym.make(opt.env_name)
     # ------ env set up end ------
