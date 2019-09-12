@@ -251,7 +251,7 @@ def worker_test(ps, replay_buffer, opt):
     # ------ env set up ------
     test_env = football_env.create_environment(env_name=opt.env_name,
                                                stacked=opt.stacked, representation=opt.representation, render=False)
-    test_env = FootballWrapper(test_env)
+    # test_env = FootballWrapper(test_env)
 
     # test_env = gym.make(opt.env_name)
     # ------ env set up end ------
@@ -357,6 +357,12 @@ if __name__ == '__main__':
 
     task_train = [worker_train.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
-    task_test = worker_test.remote(ps, replay_buffer, opt)
+    flag = False
+    while True:
+        if flag:
+            print("worker test restart!!!!!!!!!!!!!!!!!!")
+            exit(88886)
+        flag = True
+        task_test = worker_test.remote(ps, replay_buffer, opt)
 
-    ray.wait([task_test, ])
+        ray.wait([task_test, ])

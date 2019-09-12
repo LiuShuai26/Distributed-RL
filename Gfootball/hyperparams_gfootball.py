@@ -90,17 +90,16 @@ class FootballWrapper(object):
         return getattr(self._env, name)
 
     def reset(self):
-        o = self._env.reset()
-        obs = np.concatenate((o[:24], o[88:]))
+        obs = self._env.reset()
+        # obs = np.concatenate((o[:24], o[88:]))
         return obs
-
 
     def step(self, action):
         r = 0.0
         for _ in range(3):
-            old_obs, reward, done, info = self._env.step(action)
-            obs = np.concatenate((old_obs[:24], old_obs[88:]))
-            if obs[24] < 0.0:
+            obs, reward, done, info = self._env.step(action)
+            # obs = np.concatenate((old_obs[:24], old_obs[88:]))
+            if obs[0] < 0.0:
                 done = True
             if reward < 0:
                 reward = 0
@@ -111,7 +110,3 @@ class FootballWrapper(object):
 
         return obs, r * 150, done, info
 
-    def test_step(self, action):
-        old_obs, reward, done, info = self._env.step(action)
-        obs = np.concatenate((old_obs[:24], old_obs[88:]))
-        return obs, reward, done, info
