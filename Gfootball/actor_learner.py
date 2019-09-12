@@ -248,7 +248,7 @@ class Actor(object):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
             while not(d or (ep_len == self.opt.max_ep_len)):
                 # Take deterministic actions at test time
-                o, r, d, _ = test_env.test_step(self.get_action(o, True))
+                o, r, d, _ = test_env.step(self.get_action(o, True))
                 ep_ret += r
                 ep_len += 1
             rew.append(ep_ret)
