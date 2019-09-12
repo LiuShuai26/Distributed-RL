@@ -64,7 +64,7 @@ class HyperParameters:
         self.gamma = 0.997
         self.replay_size = 3000000
 
-        self.lr = 1e-4
+        self.lr = 5e-5
         self.polyak = 0.995
 
         self.steps_per_epoch = 5000
