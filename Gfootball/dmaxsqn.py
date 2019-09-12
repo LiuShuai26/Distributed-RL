@@ -29,7 +29,8 @@ flags.DEFINE_string("exp_name", "Exp1", "experiments name")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
-flags.DEFINE_string("is_restore", "False", "True or False. True means restore weights from pickle file.")
+flags.DEFINE_string("weights_file", "", "empty means False. "
+                                        "[Maxret_weights.pickle] means restore weights from this pickle file.")
 flags.DEFINE_float("a_l_ratio", 200, "steps / sample_times")
 
 
@@ -78,17 +79,19 @@ class ReplayBuffer:
 
 @ray.remote
 class ParameterServer(object):
-    def __init__(self, keys, values, is_restore=False):
+    def __init__(self, keys, values, weights_file=""):
         # These values will be mutated, so we must create a copy that is not
         # backed by the object store.
 
-        if is_restore:
+        if weights_file:
             try:
-                pickle_in = open("weights.pickle", "rb")
+                pickle_in = open(opt.save_dir+"/"+weights_file, "rb")
                 self.weights = pickle.load(pickle_in)
                 print("****** weights restored! ******")
             except:
-                print("------ error: weights.pickle doesn't exist! ------")
+                print("------------------------------------------------")
+                print(opt.save_dir+"/"+weights_file)
+                print("------ error: weights file doesn't exist! ------")
         else:
             values = [value.copy() for value in values]
             self.weights = dict(zip(keys, values))
@@ -197,7 +200,8 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     # for t in range(total_steps):
     t = 0
     while True:
-        if t > opt.start_steps:
+        # don't need to random sample action if load weights from local.
+        if t > opt.start_steps or opt.weights_file:
             a = agent.get_action(o)
         else:
             a = env.action_space.sample()
@@ -237,15 +241,14 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
 
 @ray.remote
-def worker_test(ps, replay_buffer, opt):
+def worker_test(ps, replay_buffer, opt, time0, time1):
 
     agent = Actor(opt, job="main")
 
     keys, weights = agent.get_weights()
 
-    time0 = time1 = time.time()
     sample_times1, steps, size, _ = ray.get(replay_buffer.get_counts.remote())
-    max_ret = -1000
+
     max_sample_times = 0
 
     # ------ env set up ------
@@ -290,12 +293,12 @@ def worker_test(ps, replay_buffer, opt):
             print("****** Weights saved by time! ******")
             max_sample_times = sample_times2 // int(1e6)
 
-        if ep_ret > max_ret:
+        if ep_ret > opt.max_ret:
             pickle_out = open(opt.save_dir + "/" + "Maxret_weights.pickle", "wb")
             pickle.dump(weights_all, pickle_out)
             pickle_out.close()
             print("****** Weights saved by maxret! ******")
-            max_ret = ep_ret
+            opt.max_ret = ep_ret
 
         time1 = time2
         sample_times1 = sample_times2
@@ -310,7 +313,8 @@ if __name__ == '__main__':
     # ray.init()
 
     # ------ HyperParameters ------
-    opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio)
+    opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio,
+                          FLAGS.weights_file)
     All_Parameters = copy.deepcopy(vars(opt))
     All_Parameters["wrapper"] = inspect.getsource(FootballWrapper)
     import importlib
@@ -330,8 +334,8 @@ if __name__ == '__main__':
     # ------ end ------
 
     # Create a parameter server with some random weights.
-    if FLAGS.is_restore == "True":
-        ps = ParameterServer.remote([], [], is_restore=True)
+    if FLAGS.weights_file:
+        ps = ParameterServer.remote([], [], weights_file=FLAGS.weights_file)
     else:
         net = Learner(opt, job="main")
         all_keys, all_values = net.get_weights()
@@ -357,12 +361,10 @@ if __name__ == '__main__':
 
     task_train = [worker_train.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
-    flag = False
+    time0 = time.time()
     while True:
-        if flag:
-            print("worker test restart!!!!!!!!!!!!!!!!!!")
-            exit(88886)
-        flag = True
-        task_test = worker_test.remote(ps, replay_buffer, opt)
-
+        time1 = time.time()
+        with open(opt.save_dir + "/" + 'Log.txt', 'a') as fp:
+            fp.write(str(time1)+": worker_test start!\n")
+        task_test = worker_test.remote(ps, replay_buffer, opt, time0, time1)
         ray.wait([task_test, ])

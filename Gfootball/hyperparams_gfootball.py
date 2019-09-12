@@ -8,7 +8,7 @@ from numbers import Number
 
 
 class HyperParameters:
-    def __init__(self, env_name, exp_name, total_epochs, num_workers, a_l_ratio):
+    def __init__(self, env_name, exp_name, total_epochs, num_workers, a_l_ratio, weights_file):
         # parameters set
 
         self.env_name = "academy_3_vs_1_with_keeper"
@@ -24,6 +24,7 @@ class HyperParameters:
         self.model = "mlp"
 
         self.a_l_ratio = a_l_ratio
+        self.weights_file = weights_file
 
         # gpu memory fraction
         self.gpu_fraction = 0.2
@@ -71,6 +72,8 @@ class HyperParameters:
         self.start_steps = 20000
         self.max_ep_len = 300
         self.save_freq = 1
+
+        self.max_ret = 0
 
         self.seed = 0
 
