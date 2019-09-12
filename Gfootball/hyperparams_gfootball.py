@@ -99,7 +99,7 @@ class FootballWrapper(object):
         for _ in range(1):
             obs, reward, done, info = self._env.step(action)
             # obs = np.concatenate((old_obs[:24], old_obs[88:]))
-            if obs[0] < 0.0:
+            if obs[24] < 0.0:
                 done = True
             if reward < 0:
                 reward = 0
