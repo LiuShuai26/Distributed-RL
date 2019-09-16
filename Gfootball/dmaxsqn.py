@@ -13,6 +13,7 @@ import pickle
 import multiprocessing
 import copy
 import signal
+import datetime
 
 import inspect
 import json
@@ -266,16 +267,11 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
 
         agent.set_weights(keys, weights)
 
-        # In case the env crushed
-
         ep_ret = agent.test(test_env, replay_buffer)
-
-        # ep_ret = agent.test(test_env, replay_buffer)
 
         sample_times2, steps, size, worker_alive = ray.get(replay_buffer.get_counts.remote())
         time2 = time.time()
-        # print("test_reward:", ep_ret, "sample_times:", sample_times2, "steps:", steps, "buffer_size:", size,
-        #       "actual a_l_ratio:", str(steps/(sample_times2+1))[:4], "num of alive worker:", worker_alive)
+
         print("----------------------------------")
         print("| test_reward:", ep_ret)
         print("| sample_times:", sample_times2)
@@ -285,6 +281,11 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
         print("| num of alive worker:", worker_alive)
         print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
         print("----------------------------------")
+
+        if worker_alive < opt.num_workers:
+            worker_rollout.remote(ps, replay_buffer, opt, 9)
+            with open(opt.save_dir + "/" + 'Log.txt', 'a') as fp:
+                fp.write(str(datetime.datetime.now()) + ": worker_train start!\n")
 
         if sample_times2 // int(1e6) > max_sample_times:
             pickle_out = open(opt.save_dir + "/" + str(sample_times2)[0]+"M_weights.pickle", "wb")
@@ -365,6 +366,6 @@ if __name__ == '__main__':
     while True:
         time1 = time.time()
         with open(opt.save_dir + "/" + 'Log.txt', 'a') as fp:
-            fp.write(str(time1)+": worker_test start!\n")
+            fp.write(str(datetime.datetime.now())+": worker_test start!\n")
         task_test = worker_test.remote(ps, replay_buffer, opt, time0, time1)
         ray.wait([task_test, ])
