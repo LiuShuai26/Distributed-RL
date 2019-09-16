@@ -37,50 +37,7 @@ flags.DEFINE_float("a_l_ratio", 200, "steps / sample_times")
 @ray.remote
 class ReplayBuffer:
     """
-    A simple FIFO experience replay buffer for SAC agents.
-    """
-
-    def __init__(self, obs_dim, act_dim, size):
-        self.obs1_buf = np.zeros((size,) + obs_dim, dtype=np.float32)
-        self.obs2_buf = np.zeros((size,) + obs_dim, dtype=np.float32)
-        self.acts_buf = np.zeros([size, act_dim], dtype=np.float32)
-        self.rews_buf = np.zeros(size, dtype=np.float32)
-        self.done_buf = np.zeros(size, dtype=np.float32)
-        self.ptr, self.size, self.max_size = 0, 0, size
-        self.steps, self.sample_times = 0, 0
-        self.worker_pool = set()
-
-    def store(self, obs, act, rew, next_obs, done, worker_index):
-        self.obs1_buf[self.ptr] = obs
-        self.obs2_buf[self.ptr] = next_obs
-        self.acts_buf[self.ptr] = act
-        self.rews_buf[self.ptr] = rew
-        self.done_buf[self.ptr] = done
-        self.ptr = (self.ptr+1) % self.max_size
-        self.size = min(self.size+1, self.max_size)
-        self.steps += 1
-        self.worker_pool.add(worker_index)
-
-    def sample_batch(self, batch_size=128):
-        idxs = np.random.randint(0, self.size, size=batch_size)
-        self.sample_times += 1
-        return dict(obs1=self.obs1_buf[idxs],
-                    obs2=self.obs2_buf[idxs],
-                    acts=self.acts_buf[idxs],
-                    rews=self.rews_buf[idxs],
-                    done=self.done_buf[idxs])
-
-    def get_counts(self):
-        return self.sample_times, self.steps, self.size, len(self.worker_pool)
-
-    def empty_worker_pool(self):
-        self.worker_pool = set()
-
-
-@ray.remote
-class ReplayBuffer_N:
-    """
-    A simple FIFO experience replay buffer for SAC_N_STEP agents.
+    A simple FIFO experience replay buffer for SQN_N_STEP agents.
     """
 
     def __init__(self, Ln, obs_shape, act_shape, size):
@@ -257,8 +214,8 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     # for t in range(total_steps):
     t = 0
     while True:
-        if t > opt.start_steps:
-            a = agent.get_action(o)
+        if t > opt.start_steps_per_worker or opt.is_restore:
+            a = agent.get_action(o, deterministic=False)
         else:
             a = env.action_space.sample()
             t += 1
@@ -286,13 +243,13 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
         o_queue.append((o2,))
 
         if t_queue % opt.Ln == 0:
-            replay_buffer_nstep.store.remote(o_queue, a_r_d_queue, worker_index)
+            replay_buffer.store.remote(o_queue, a_r_d_queue, worker_index)
 
         if d and t_queue % opt.Ln != 0:
             for _0 in range(opt.Ln - t_queue % opt.Ln):
                 a_r_d_queue.append((np.zeros(opt.a_shape, dtype=np.float32), 0.0, True,))
                 o_queue.append((np.zeros((opt.obs_dim,), dtype=np.float32), ))
-            replay_buffer_nstep.store.remote(o_queue, a_r_d_queue, worker_index)
+            replay_buffer.store.remote(o_queue, a_r_d_queue, worker_index)
 
         t_queue += 1
 
@@ -306,7 +263,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
                 sample_times, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
                 time.sleep(0.1)
 
-            print("reward:", ep_ret)
+            print('rollout_ep_len:', ep_len, 'rollout_ep_ret:', ep_ret)
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             agent.set_weights(keys, weights)
@@ -361,6 +318,7 @@ def worker_test(ps, replay_buffer, opt):
         print("| test_reward:", ep_ret)
         print("| sample_times:", sample_times2)
         print("| steps:", steps)
+        print("| env_steps:", steps*opt.Ln)
         print("| buffer_size:", size)
         print("| actual a_l_ratio:", str(steps/(sample_times2+1))[:4])
         print("| num of alive worker:", worker_alive)
@@ -423,22 +381,22 @@ if __name__ == '__main__':
         ps = ParameterServer.remote(all_keys, all_values)
 
     # Experience buffer
-    replay_buffer_nstep = ReplayBuffer_N.remote(Ln=opt.Ln, obs_shape=opt.o_shape, act_shape=opt.a_shape, size=opt.replay_size)
+    replay_buffer = ReplayBuffer.remote(Ln=opt.Ln, obs_shape=opt.o_shape, act_shape=opt.a_shape, size=opt.replay_size)
 
     # Start some training tasks.
-    task_rollout = [worker_rollout.remote(ps, replay_buffer_nstep, opt, i) for i in range(FLAGS.num_workers)]
+    task_rollout = [worker_rollout.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
 
     # store at least start_steps in buffer before training
-    _, steps, _, _ = ray.get(replay_buffer_nstep.get_counts.remote())
+    _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
     while steps < 500:  # opt.start_steps
-        _, steps, _, _ = ray.get(replay_buffer_nstep.get_counts.remote())
+        _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
         print(steps)
         time.sleep(1)
 
-    task_train = [worker_train.remote(ps, replay_buffer_nstep, opt, i) for i in range(FLAGS.num_learners)]
+    task_train = [worker_train.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
 
     while True:
-        task_test = worker_test.remote(ps, replay_buffer_nstep, opt)
+        task_test = worker_test.remote(ps, replay_buffer, opt)
         ray.wait([task_test, ])
 
     # ray.wait([task_test, ])

@@ -103,7 +103,7 @@ def actor_critic(x, x2,  a, alpha, hidden_sizes=(400,300), activation=tf.nn.relu
         x = (x - 128.0) / 128.0          # x: shape(?,128)
 
     act_dim = action_space.n
-    a_one_hot = tf.one_hot(a[..., 0], depth=act_dim)      # shape(?,4)
+    a_one_hot = tf.one_hot(a, depth=act_dim)      # shape(?,4)
     #vfs TODO might not good
     if model == "mlp":
         vf_model = lambda x: mlp(x, list(hidden_sizes) + [act_dim], activation, None)     # return: shape(?,4)

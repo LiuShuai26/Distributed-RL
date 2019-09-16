@@ -64,12 +64,13 @@ class Learner(object):
             # ------
 
             # Min Double-Q:
-            min_q_pi = tf.minimum(q1_mu_, q2_mu_)
-            # min_q_pi = tf.minimum(q1_pi_, q2_pi_)
+            if opt.use_max:
+                min_q_pi = tf.minimum(q1_mu_, q2_mu_)
+            else:
+                min_q_pi = tf.minimum(q1_pi_, q2_pi_)  # x2
 
-            # Targets for Q and V regression
-            # v_backup = tf.stop_gradient(min_q_pi - alpha_v * logp_pi2)
-            # q_backup = self.r_ph + opt.gamma * (1 - self.d_ph) * v_backup
+            min_q_pi = tf.clip_by_value(min_q_pi, -300.0, 900.0)
+
 
             #### n-step backup
             q_backup = tf.stop_gradient(min_q_pi)
@@ -133,13 +134,6 @@ class Learner(object):
             self.variables = ray.experimental.tf_utils.TensorFlowVariables(
                 self.value_loss, self.sess)
 
-    def get_logp_pi(self, x):
-        logp_pi = []
-        for Ln_i in range(self.opt.Ln):
-            logp_pi.append(self.sess.run(self.logp_pi2, feed_dict={self.x2_ph: x[:,Ln_i+1]}) )
-        batch_logp_pi = np.stack(logp_pi, axis=1)    # or np.swapaxes(np.array(entropy), 0, 1)
-        return batch_logp_pi
-
     def set_weights(self, variable_names, weights):
         self.variables.set_weights(dict(zip(variable_names, weights)))
         self.sess.run(self.target_init)
@@ -150,6 +144,13 @@ class Learner(object):
         values = [weights[key] for key in keys]
         return keys, values
 
+    def get_logp_pi(self, x):
+        logp_pi_s = []
+        for Ln_i in range(self.opt.Ln):
+            logp_pi_s.append( self.sess.run(self.logp_pi2, feed_dict={self.x2_ph: x[:,Ln_i+1]}) )
+        batch_logp_pi = np.stack(logp_pi_s, axis=1)    # or np.swapaxes(np.array(entropy), 0, 1)
+        return batch_logp_pi
+
     def train(self, batch, cnt):
         batch_logp_pi = self.get_logp_pi(batch['obs'])
         feed_dict = {self.x_ph: batch['obs'][:, 0],
@@ -159,17 +160,7 @@ class Learner(object):
                      self.r_ph: batch['rews'],
                      self.d_ph: batch['done'],
                      }
-
-        # TODO need to double check
-        # if cnt > self.opt.start_steps:
-        #     outs = self.sess.run(self.step_ops, feed_dict)
-        # else:
-        #     outs = self.sess.run(self.step_ops_notraining, feed_dict)
-
-        if cnt > 20000:
-            outs = self.sess.run(self.step_ops, feed_dict)
-        else:
-            outs = self.sess.run(self.step_ops_notraining, feed_dict)
+        outs = self.sess.run(self.step_ops, feed_dict)
 
         summary_str = self.sess.run(self.train_ops, feed_dict={
             self.train_vars[0]: outs[0],
@@ -220,8 +211,7 @@ class Actor(object):
             np.random.seed(opt.seed)
 
             # Inputs to computation graph
-            self.x_ph, self.a_ph, self.x2_ph, self.r_ph, self.d_ph = \
-                core.placeholders(opt.o_shape, opt.a_shape, opt.o_shape, None, None)
+            self.x_ph, self.a_ph, self.x2_ph, = core.placeholders(opt.o_shape, opt.a_shape, opt.o_shape)
 
             # ------
             if opt.alpha == 'auto':
@@ -265,7 +255,7 @@ class Actor(object):
         values = [weights[key] for key in keys]
         return keys, values
 
-    def get_action(self, o, deterministic=False):
+    def get_action(self, o, deterministic):
         act_op = self.mu if deterministic else self.pi
         return self.sess.run(act_op, feed_dict={self.x_ph: np.expand_dims(o, axis=0)})[0]
 
@@ -275,10 +265,12 @@ class Actor(object):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
             while not(d or (ep_len == self.opt.max_ep_len)):
                 # Take deterministic actions at test time
-                o, r, d, _ = test_env.step(self.get_action(o, True))
+                o, r, d, _ = test_env.step(self.get_action(o, deterministic=True))
                 ep_ret += r
                 ep_len += 1
             rew.append(ep_ret)
+            print('test_ep_len:', ep_len, 'test_ep_ret:', ep_ret)
+
 
         sample_times, _, _, _ = ray.get(replay_buffer.get_counts.remote())
         summary_str = self.sess.run(self.test_ops, feed_dict={
