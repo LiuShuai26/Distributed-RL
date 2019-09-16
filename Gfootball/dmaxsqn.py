@@ -38,7 +38,7 @@ flags.DEFINE_float("a_l_ratio", 200, "steps / sample_times")
 @ray.remote
 class ReplayBuffer:
     """
-    A simple FIFO experience replay buffer for SAC agents.
+    A simple FIFO experience replay buffer for SQN agents.
     """
 
     def __init__(self, obs_dim, act_dim, size):
@@ -233,7 +233,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
                 sample_times, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
                 time.sleep(0.1)
 
-            print("reward:", ep_ret)
+            print('rollout_ep_len:', ep_len, 'rollout_ep_ret:', ep_ret)
             # update parameters every episode
             weights = ray.get(ps.pull.remote(keys))
             agent.set_weights(keys, weights)

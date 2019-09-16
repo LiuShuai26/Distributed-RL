@@ -8,7 +8,7 @@ from numbers import Number
 
 
 class HyperParameters:
-    def __init__(self, env_name, exp_name, total_epochs, num_workers, a_l_ratio):
+    def __init__(self, env_name, exp_name, total_epochs, num_workers, a_l_ratio, weights_file):
         # parameters set
 
         self.env_name = "academy_3_vs_1_with_keeper"
@@ -26,14 +26,14 @@ class HyperParameters:
         self.Ln = 1
 
         self.a_l_ratio = a_l_ratio
+        self.weights_file = weights_file
 
         # gpu memory fraction
         self.gpu_fraction = 0.2
 
         self.ac_kwargs = dict(hidden_sizes=[600, 400, 200])
 
-        env_football = football_env.create_environment(env_name=self.env_name,
-                                                       stacked=self.stacked,
+        env_football = football_env.create_environment(env_name=self.env_name, stacked=self.stacked,
                                                        representation=self.representation, render=False)
 
         # env = FootballWrapper(env_football)
@@ -71,6 +71,7 @@ class HyperParameters:
         self.total_epochs = total_epochs
         self.num_workers = num_workers
 
+
         self.Ln = 3
         self.use_max = False
         self.alpha = 0.1
@@ -89,6 +90,8 @@ class HyperParameters:
         self.start_steps_per_worker = int(self.start_steps/self.num_workers)
         self.max_ep_len = 500
         self.save_freq = 1
+
+        self.max_ret = 0
 
         self.seed = 0
 

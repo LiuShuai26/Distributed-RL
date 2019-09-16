@@ -255,7 +255,7 @@ class Actor(object):
         values = [weights[key] for key in keys]
         return keys, values
 
-    def get_action(self, o, deterministic):
+    def get_action(self, o, deterministic=False):
         act_op = self.mu if deterministic else self.pi
         return self.sess.run(act_op, feed_dict={self.x_ph: np.expand_dims(o, axis=0)})[0]
 
@@ -265,7 +265,7 @@ class Actor(object):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0
             while not(d or (ep_len == self.opt.max_ep_len)):
                 # Take deterministic actions at test time
-                o, r, d, _ = test_env.step(self.get_action(o, deterministic=True))
+                o, r, d, _ = test_env.step(self.get_action(o, True))
                 ep_ret += r
                 ep_len += 1
             rew.append(ep_ret)

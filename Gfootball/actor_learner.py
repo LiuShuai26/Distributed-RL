@@ -31,7 +31,6 @@ class Learner(object):
                 core.placeholders_from_space(opt.obs_space, opt.act_space, opt.obs_space, None, None)
 
             # ------
-            # TODO BUG: TypeError: can't pickle _thread.RLock objects
             if opt.alpha == 'auto':
                 log_alpha = tf.get_variable('log_alpha', dtype=tf.float32, initializer=0.0)
                 alpha_v = tf.exp(log_alpha)
@@ -252,6 +251,8 @@ class Actor(object):
                 ep_ret += r
                 ep_len += 1
             rew.append(ep_ret)
+            print('test_ep_len:', ep_len, 'test_ep_ret:', ep_ret)
+
 
         sample_times, _, _, _ = ray.get(replay_buffer.get_counts.remote())
         summary_str = self.sess.run(self.test_ops, feed_dict={
