@@ -99,7 +99,9 @@ class HyperParameters:
 
         self.summary_dir = cwd + '/tboard_ray'  # Directory for storing tensorboard summary results
         self.save_dir = cwd + '/' + self.exp_name    # Directory for storing trained model
-        self.is_restore = False
+
+        self.log_dir = self.summary_dir + "/" + str(datetime.datetime.now()) + "-workers_num:" + \
+                       str(self.num_workers) + "%" + str(self.a_l_ratio) + self.env_name + "-" + self.exp_name
 
 
 # reward wrapper
@@ -107,34 +109,24 @@ class FootballWrapper(object):
 
     def __init__(self, env):
         self._env = env
-        self.dis_to_goal = 0.0
 
     def __getattr__(self, name):
         return getattr(self._env, name)
 
     def reset(self):
         obs = self._env.reset()
-        self.dis_to_goal = np.linalg.norm(obs[0:2] - [1.0, 0.0])
+        # obs = np.concatenate((o[:24], o[88:]))
         return obs
 
     def step(self, action):
         r = 0.0
         for _ in range(1):
             obs, reward, done, info = self._env.step(action)
-            # if reward != 0.0:
-            #     done = True
-            # else:
-            #     done = False
-            if reward < 0.0:
-                reward = 0.0
-            # reward -= 0.00175
-
-            # if obs[0] < 0.0:
-            #     done = True
-
-            if not done:  # when env is done, ball position will be reset.
-                reward += self.incentive(obs)
-
+            # obs = np.concatenate((old_obs[:24], old_obs[88:]))
+            if obs[24] < 0.0:
+                done = True
+            if reward < 0:
+                reward = 0
             r += reward
 
             if done:
@@ -142,14 +134,3 @@ class FootballWrapper(object):
 
         return obs, r * 150, done, info
 
-    def incentive(self, obs):
-        # total accumulative incentive reward is around 0.5
-        dis_to_goal_new = np.linalg.norm(obs[0:2] - [1.01, 0.0])
-        r = 0.25 * (self.dis_to_goal - dis_to_goal_new)
-        self.dis_to_goal = dis_to_goal_new
-        return r
-
-    def incentive1(self, obs):
-        r = -self.dis_to_goal * (1e-4)  # punishment weighted by dis_to_goal
-        self.dis_to_goal = np.linalg.norm(obs[0:2] - [1.01, 0.0])  # interval: 0.0 ~ 2.0
-        return r

@@ -318,7 +318,7 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
         print("| steps:", steps)
         print("| env_steps:", steps*opt.Ln)
         print("| buffer_size:", size)
-        print("| actual a_l_ratio:", str(steps/(sample_times2+1))[:4])
+        print("| actual a_l_ratio:", str((steps-opt.start_steps)/(sample_times2+1))[:4])
         print("| num of alive worker:", worker_alive)
         print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
         print("----------------------------------")

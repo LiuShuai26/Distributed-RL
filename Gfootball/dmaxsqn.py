@@ -28,7 +28,7 @@ FLAGS = tf.app.flags.FLAGS
 flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
 flags.DEFINE_string("exp_name", "Exp1", "experiments name")
 flags.DEFINE_integer("total_epochs", 500, "total_epochs")
-flags.DEFINE_integer("num_workers", 1, "number of workers")
+flags.DEFINE_integer("num_workers", 6, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("weights_file", "", "empty means False. "
                                         "[Maxret_weights.pickle] means restore weights from this pickle file.")
@@ -277,7 +277,7 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
         print("| sample_times:", sample_times2)
         print("| steps:", steps)
         print("| buffer_size:", size)
-        print("| actual a_l_ratio:", str(steps/(sample_times2+1))[:4])
+        print("| actual a_l_ratio:", str((steps-opt.start_steps)/(sample_times2+1))[:4])
         print("| num of alive worker:", worker_alive)
         print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
         print("----------------------------------")
