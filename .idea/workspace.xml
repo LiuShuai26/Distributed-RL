@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="gfootball and gfootball n-steps update: add tensorboard log_dir. learner add summary slow down, al_ratio consider start steps">
+    <list default="true" id="434cfe01-46a3-4887-b0fd-48a2a5b6b278" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gfootball/dmaxsqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/dmaxsqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gfootball/actor_learner.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/actor_learner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gfootball/render_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball/render_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gfootball_n_steps/hyperparams_gfootball.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gfootball_n_steps/hyperparams_gfootball.py" afterDir="false" />
     </list>
     <list id="8dc69c31-a7ac-4bba-a17e-a117160e7896" name="gfootball env-v1.3 test" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Gfootball/actor_learner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3212">
-              <caret line="146" column="44" lean-forward="true" selection-start-line="146" selection-start-column="44" selection-end-line="146" selection-end-column="44" />
+            <state relative-caret-position="-1950">
+              <caret line="118" column="30" selection-start-line="118" selection-start-column="21" selection-end-line="118" selection-end-column="30" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -27,9 +29,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gfootball/core.py">
+        <entry file="file://$PROJECT_DIR$/Gfootball/dmaxsqn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="2694">
+              <caret line="269" selection-start-line="269" selection-end-line="269" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -40,32 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gfootball/hyperparams_gfootball.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="365">
-              <caret line="82" column="21" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Gfootball/dmaxsqn.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="783">
-              <caret line="357" lean-forward="true" selection-start-line="357" selection-end-line="357" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gfootball/render_test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="910">
-              <caret line="58" column="22" lean-forward="true" selection-start-line="58" selection-start-column="22" selection-end-line="58" selection-end-column="22" />
+            <state relative-caret-position="1353">
+              <caret line="117" selection-start-line="117" selection-end-line="117" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -84,8 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sample_batch</find>
-      <find>logger</find>
       <find>saver</find>
       <find>env</find>
       <find>11_vs_11_</find>
@@ -114,6 +91,8 @@
       <find>ReplayBuffer_N</find>
       <find>replay_buffer_nstep</find>
       <find>weights_file</find>
+      <find>PixelsStateWrapper</find>
+      <find>COLOR_RGB2GRAY</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -170,15 +149,15 @@
         <option value="$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/scenarios/academy_3_vs_1_with_keeper_random.py" />
         <option value="$PROJECT_DIR$/Gfootball_cpu/hyperparams_gfootball.py" />
         <option value="$PROJECT_DIR$/Gfootball_n_steps/actor_learner.py" />
-        <option value="$PROJECT_DIR$/Gfootball/render_test.py" />
         <option value="$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/wrappers.py" />
         <option value="$PROJECT_DIR$/Gfootball/t.py" />
         <option value="$PROJECT_DIR$/Gfootball_n_steps/core.py" />
-        <option value="$PROJECT_DIR$/Gfootball_n_steps/hyperparams_gfootball.py" />
         <option value="$PROJECT_DIR$/Gfootball_n_steps/dmaxsqn.py" />
         <option value="$PROJECT_DIR$/Gfootball/hyperparams_gfootball.py" />
-        <option value="$PROJECT_DIR$/Gfootball/actor_learner.py" />
         <option value="$PROJECT_DIR$/Gfootball/dmaxsqn.py" />
+        <option value="$PROJECT_DIR$/Gfootball_n_steps/hyperparams_gfootball.py" />
+        <option value="$PROJECT_DIR$/Gfootball/render_test.py" />
+        <option value="$PROJECT_DIR$/Gfootball/actor_learner.py" />
       </list>
     </option>
   </component>
@@ -207,12 +186,6 @@
             <path>
               <item name="Distributed-RL" type="b2602c69:ProjectViewProjectNode" />
               <item name="Distributed-RL" type="462c0819:PsiDirectoryNode" />
-              <item name="Gfootball" type="462c0819:PsiDirectoryNode" />
-              <item name="Exp1" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Distributed-RL" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Distributed-RL" type="462c0819:PsiDirectoryNode" />
               <item name="Gfootball_n_steps" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -224,7 +197,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Distributed-DRL" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Gfootball/actor_learner.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/Gfootball/actor_learner.py" />
   </component>
@@ -358,10 +331,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.dmaxsqn (2)" />
+        <item itemvalue="Python.render_test" />
         <item itemvalue="Python.dmaxsqn (1)" />
         <item itemvalue="Python.hyperparams_gfootball" />
         <item itemvalue="Python.t" />
-        <item itemvalue="Python.render_test" />
       </list>
     </recent_temporary>
   </component>
@@ -376,20 +349,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1564393206376</updated>
-    </task>
-    <task id="LOCAL-00019" summary="dsac1 version-0.6.1 shared replay buffer by ray">
-      <created>1564822302451</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1564822302451</updated>
-    </task>
-    <task id="LOCAL-00020" summary="dsac1 version-0.6.1 shared replay buffer by ray">
-      <created>1565079351865</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1565079351865</updated>
     </task>
     <task id="LOCAL-00021" summary="Revert &quot;dsac1 version-0.6.2 debuged shared replay buffer by ray&quot;">
       <created>1565079626171</created>
@@ -720,15 +679,28 @@
       <option name="project" value="LOCAL" />
       <updated>1568639845279</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="gfootball load weights start_steps=1e6">
+      <created>1568685260317</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1568685260318</updated>
+    </task>
+    <task id="LOCAL-00069" summary="gfootball nstep debug">
+      <created>1568686378798</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1568686378798</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-4" width="2560" height="1444" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.19865984" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.22506899" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.49940875" weight="0.398956" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5005913" side_tool="true" weight="0.398956" />
@@ -736,7 +708,7 @@
       <window_info anchor="bottom" id="Message" order="3" />
       <window_info anchor="bottom" id="Find" order="4" weight="0.32960477" />
       <window_info anchor="bottom" id="Version Control" order="5" weight="0.18791947" />
-      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.49940875" weight="0.24981357" />
+      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.49940875" visible="true" weight="0.24981357" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.3997017" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
@@ -745,25 +717,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
-    <layout-to-restore>
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.19865984" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.49940875" weight="0.398956" />
-      <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5005913" side_tool="true" weight="0.398956" />
-      <window_info anchor="bottom" id="Python Console" order="2" weight="0.32960477" />
-      <window_info anchor="bottom" id="Message" order="3" />
-      <window_info anchor="bottom" id="Find" order="4" weight="0.32960477" />
-      <window_info anchor="bottom" id="Version Control" order="5" visible="true" weight="0.18791947" />
-      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.49940875" weight="0.24981357" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.3997017" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -817,8 +770,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="ray_sac1 version-0.8.3 worker wait&#10;dsac1 version-0.7.0" />
-    <MESSAGE value="add Gfootball" />
     <MESSAGE value="add try except in case env broken" />
     <MESSAGE value="add gfootball wrapper" />
     <MESSAGE value="Distributed maxsqn" />
@@ -842,25 +793,11 @@
     <MESSAGE value="gfootball version 2.1 worker died and live again" />
     <MESSAGE value="gfootball n-steps version 1.0 test" />
     <MESSAGE value="gfootball and gfootball n-steps update: add tensorboard log_dir. learner add summary slow down, al_ratio consider start steps" />
-    <option name="LAST_COMMIT_MESSAGE" value="gfootball and gfootball n-steps update: add tensorboard log_dir. learner add summary slow down, al_ratio consider start steps" />
+    <MESSAGE value="gfootball load weights start_steps=1e6" />
+    <MESSAGE value="gfootball nstep debug" />
+    <option name="LAST_COMMIT_MESSAGE" value="gfootball nstep debug" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/DSAC1/async_parameter_server.py" />
-    <entry file="file://$PROJECT_DIR$/../.conda/envs/spinningup/lib/python3.6/site-packages/redis/client.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="840">
-          <caret line="3028" column="36" lean-forward="true" selection-start-line="3028" selection-start-column="36" selection-end-line="3028" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../.conda/envs/spinningup/lib/python3.6/os.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="668" selection-start-line="668" selection-end-line="668" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DSAC1/Ray_Sac1/autoe.bash" />
     <entry file="file://$PROJECT_DIR$/DSAC1/Ray_Sac1/ray_sac1_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="627">
@@ -1015,16 +952,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/football_env_wrapper.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2618">
-          <caret line="138" column="19" selection-start-line="138" selection-start-column="5" selection-end-line="138" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Gfootball_cpu/hyperparams_gfootball.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="800">
@@ -1042,13 +969,6 @@
           <folding>
             <element signature="e#589#604#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/wrappers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="89" selection-start-line="89" selection-end-line="90" selection-end-column="40" />
         </state>
       </provider>
     </entry>
@@ -1085,37 +1005,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/actor_learner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1276">
-          <caret line="76" column="50" selection-start-line="76" selection-start-column="50" selection-end-line="76" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/dmaxsqn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="844">
-          <caret line="325" column="51" lean-forward="true" selection-start-line="325" selection-start-column="51" selection-end-line="325" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/hyperparams_gfootball.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="910">
-          <caret line="99" column="31" selection-start-line="99" selection-start-column="31" selection-end-line="99" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Gfootball/test/Log.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1123,16 +1012,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
           <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gfootball/actor_learner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3212">
-          <caret line="146" column="44" lean-forward="true" selection-start-line="146" selection-start-column="44" selection-end-line="146" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1145,10 +1024,90 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/wrappers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="63" column="18" lean-forward="true" selection-start-line="63" selection-start-column="8" selection-end-line="63" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gym/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="7" column="8" selection-start-line="7" selection-start-column="8" selection-end-line="7" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/football_env.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="130" column="24" selection-start-line="130" selection-start-column="24" selection-end-line="130" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/football_env_wrapper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="759">
+          <caret line="88" column="22" selection-start-line="88" selection-start-column="22" selection-end-line="88" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/football_env_core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-936">
+          <caret line="233" column="51" selection-start-line="233" selection-start-column="42" selection-end-line="233" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gym/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="53" selection-start-line="8" selection-start-column="53" selection-end-line="8" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../.conda/envs/gfootball/lib/python3.6/site-packages/gfootball/env/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="492">
+          <caret line="142" column="31" lean-forward="true" selection-start-line="142" selection-start-column="31" selection-end-line="142" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/dmaxsqn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="844">
+          <caret line="325" column="42" selection-start-line="325" selection-start-column="42" selection-end-line="325" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/hyperparams_gfootball.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="72" column="13" selection-start-line="72" selection-start-column="13" selection-end-line="72" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gfootball_n_steps/actor_learner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="76" column="50" selection-start-line="76" selection-start-column="50" selection-end-line="76" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Gfootball/render_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="910">
-          <caret line="58" column="22" lean-forward="true" selection-start-line="58" selection-start-column="22" selection-end-line="58" selection-end-column="22" />
+        <state relative-caret-position="162">
+          <caret line="33" column="32" lean-forward="true" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -1157,8 +1116,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gfootball/hyperparams_gfootball.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="365">
-          <caret line="82" column="21" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="21" />
+        <state relative-caret-position="1353">
+          <caret line="117" selection-start-line="117" selection-end-line="117" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -1167,10 +1126,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gfootball/dmaxsqn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="783">
-          <caret line="357" lean-forward="true" selection-start-line="357" selection-end-line="357" />
+        <state relative-caret-position="2694">
+          <caret line="269" selection-start-line="269" selection-end-line="269" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gfootball/actor_learner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1950">
+          <caret line="118" column="30" selection-start-line="118" selection-start-column="21" selection-end-line="118" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>

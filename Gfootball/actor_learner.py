@@ -251,9 +251,10 @@ class Actor(object):
             rew.append(ep_ret)
             print('test_ep_len:', ep_len, 'test_ep_ret:', ep_ret)
 
-        sample_times, _, _, _ = ray.get(replay_buffer.get_counts.remote())
+        sample_times, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
         summary_str = self.sess.run(self.test_ops, feed_dict={
-            self.test_vars[0]: sum(rew)/n
+            self.test_vars[0]: sum(rew)/n,
+            self.test_vars[1]: (steps - self.opt.start_steps) / (sample_times + 1)
         })
 
         self.writer.add_summary(summary_str, sample_times)
@@ -264,9 +265,10 @@ class Actor(object):
     def build_summaries(self):
         test_summaries = []
         episode_reward = tf.Variable(0.)
+        a_l_ratio = tf.Variable(0.)
         test_summaries.append(tf.summary.scalar("Reward", episode_reward))
-
+        test_summaries.append(tf.summary.scalar("a_l_ratio", a_l_ratio))
         test_ops = tf.summary.merge(test_summaries)
-        test_vars = [episode_reward]
+        test_vars = [episode_reward, a_l_ratio]
 
         return test_ops, test_vars

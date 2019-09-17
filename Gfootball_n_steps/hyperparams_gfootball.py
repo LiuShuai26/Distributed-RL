@@ -82,9 +82,8 @@ class HyperParameters:
         self.polyak = 0.995
 
         self.steps_per_epoch = 5000
-        self.batch_size = 300
+        self.batch_size = 256
         self.start_steps = int(3e4)
-        self.start_steps_per_worker = int(self.start_steps/self.num_workers)
         self.max_ep_len = 500
         self.save_freq = 1
 
