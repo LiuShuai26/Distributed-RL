@@ -23,8 +23,6 @@ class HyperParameters:
         self.stacked = False
         self.model = "mlp"
 
-        self.Ln = 1
-
         self.a_l_ratio = a_l_ratio
         self.weights_file = weights_file
 
@@ -70,7 +68,6 @@ class HyperParameters:
 
         self.total_epochs = total_epochs
         self.num_workers = num_workers
-
 
         self.Ln = 3
         self.use_max = False
