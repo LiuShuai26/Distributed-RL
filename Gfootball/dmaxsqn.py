@@ -31,7 +31,7 @@ flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 6, "number of workers")
 flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("weights_file", "", "empty means False. "
-                                        "[Maxret_weights.pickle] means restore weights from this pickle file.")
+                                        "[/path/Maxret_weights.pickle] means restore weights from this pickle file.")
 flags.DEFINE_float("a_l_ratio", 200, "steps / sample_times")
 
 
@@ -86,12 +86,12 @@ class ParameterServer(object):
 
         if weights_file:
             try:
-                pickle_in = open(opt.save_dir+"/"+weights_file, "rb")
+                pickle_in = open(weights_file, "rb")
                 self.weights = pickle.load(pickle_in)
                 print("****** weights restored! ******")
             except:
                 print("------------------------------------------------")
-                print(opt.save_dir+"/"+weights_file)
+                print(weights_file)
                 print("------ error: weights file doesn't exist! ------")
         else:
             values = [value.copy() for value in values]
@@ -352,6 +352,9 @@ if __name__ == '__main__':
 
     # Start some training tasks.
     task_rollout = [worker_rollout.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
+
+    if FLAGS.weights_file:
+        opt.start_steps = int(1e6)
 
     # store at least start_steps in buffer before training
     _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
