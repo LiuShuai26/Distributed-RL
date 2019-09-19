@@ -161,7 +161,7 @@ class Learner(object):
                      self.d_ph: batch['done'],
                      }
         outs = self.sess.run(self.step_ops, feed_dict)
-        if cnt % 10 == 1:
+        if cnt % 100 == 1:
             summary_str = self.sess.run(self.train_ops, feed_dict={
                 self.train_vars[0]: outs[0],
                 self.train_vars[1]: outs[1],
@@ -259,7 +259,7 @@ class Actor(object):
         act_op = self.mu if deterministic else self.pi
         return self.sess.run(act_op, feed_dict={self.x_ph: np.expand_dims(o, axis=0)})[0]
 
-    def test(self, test_env, replay_buffer, n=100):
+    def test(self, test_env, replay_buffer, n=25):
         rew = []
         for j in range(n):
             o, r, d, ep_ret, ep_len = test_env.reset(), 0, False, 0, 0

@@ -142,7 +142,7 @@ class Learner(object):
                      self.d_ph: batch['done'],
                      }
         outs = self.sess.run(self.step_ops, feed_dict)
-        if cnt % 10 == 1:
+        if cnt % 100 == 1:
             summary_str = self.sess.run(self.train_ops, feed_dict={
                 self.train_vars[0]: outs[0],
                 self.train_vars[1]: outs[1],

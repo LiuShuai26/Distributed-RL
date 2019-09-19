@@ -11,7 +11,7 @@ class HyperParameters:
     def __init__(self, env_name, exp_name, total_epochs, num_workers, a_l_ratio, weights_file):
         # parameters set
 
-        self.env_name = "academy_3_vs_1_with_keeper"
+        self.env_name = "11_vs_11_easy_stochastic"
 
         # "_random", "_d_True", ""
         self.rollout_env_name = self.env_name + ""
@@ -29,7 +29,7 @@ class HyperParameters:
         # gpu memory fraction
         self.gpu_fraction = 0.2
 
-        self.ac_kwargs = dict(hidden_sizes=[600, 400, 200])
+        self.ac_kwargs = dict(hidden_sizes=[400, 600, 400, 200])
 
         env_football = football_env.create_environment(env_name=self.env_name, stacked=self.stacked,
                                                        representation=self.representation, render=False)
@@ -51,7 +51,8 @@ class HyperParameters:
         # self.act_dim = env.action_space.n
         # self.act_space = env.action_space
 
-        scenario_obsdim = {'academy_empty_goal': 32, 'academy_empty_goal_random': 32, 'academy_3_vs_1_with_keeper': 51,
+        scenario_obsdim = {'11_vs_11_easy_stochastic': 115, 'academy_empty_goal': 32, 'academy_empty_goal_random': 32,
+                           'academy_3_vs_1_with_keeper': 51,
                            'academy_3_vs_1_with_keeper_random': 51, 'academy_single_goal_versus_lazy': 108}
         self.obs_dim = scenario_obsdim[self.env_name]
         self.obs_space = Box(low=-1.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
@@ -84,7 +85,7 @@ class HyperParameters:
         self.steps_per_epoch = 5000
         self.batch_size = 256
         self.start_steps = int(3e4)
-        self.max_ep_len = 500
+        self.max_ep_len = 2900
         self.save_freq = 1
 
         self.max_ret = 0
