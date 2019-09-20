@@ -353,7 +353,6 @@ if __name__ == '__main__':
 
     ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
     # ray.init()
-    print("ray.get_gpu_ids(): {}".format(ray.get_gpu_ids()))
 
     # ------ HyperParameters ------
     opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio,
@@ -376,7 +375,6 @@ if __name__ == '__main__':
 
     # ------ end ------
 
-    # Create a parameter server with some random weights.
     if FLAGS.weights_file:
         ps = ParameterServer.remote([], [], weights_file=FLAGS.weights_file)
     else:
@@ -389,6 +387,9 @@ if __name__ == '__main__':
 
     # Start some training tasks.
     task_rollout = [worker_rollout.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
+
+    if FLAGS.weights_file:
+        opt.start_steps = int(1e6)
 
     # store at least start_steps in buffer before training
     _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())

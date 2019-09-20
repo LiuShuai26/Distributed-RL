@@ -85,7 +85,7 @@ class HyperParameters:
         self.steps_per_epoch = 5000
         self.batch_size = 256
         self.start_steps = int(3e4)
-        self.max_ep_len = 2900
+        self.max_ep_len = 960
         self.save_freq = 1
 
         self.max_ret = 0
@@ -117,7 +117,7 @@ class FootballWrapper(object):
 
     def step(self, action):
         r = 0.0
-        for _ in range(3):
+        for _ in range(1):
             obs, reward, done, info = self._env.step(action)
             # obs = np.concatenate((old_obs[:24], old_obs[88:]))
             # if obs[24] < 0.0:
