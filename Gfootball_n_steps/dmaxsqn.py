@@ -89,12 +89,12 @@ class ParameterServer(object):
 
         if weights_file:
             try:
-                pickle_in = open(opt.save_dir+"/"+weights_file, "rb")
+                pickle_in = open(weights_file, "rb")
                 self.weights = pickle.load(pickle_in)
                 print("****** weights restored! ******")
             except:
                 print("------------------------------------------------")
-                print(opt.save_dir+"/"+weights_file)
+                print(weights_file)
                 print("------ error: weights file doesn't exist! ------")
         else:
             values = [value.copy() for value in values]
