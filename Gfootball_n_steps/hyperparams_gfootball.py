@@ -29,7 +29,7 @@ class HyperParameters:
         # gpu memory fraction
         self.gpu_fraction = 0.2
 
-        self.ac_kwargs = dict(hidden_sizes=[400, 600, 400, 200])
+        self.ac_kwargs = dict(hidden_sizes=[400, 600, 600, 400, 200])
 
         env_football = football_env.create_environment(env_name=self.env_name, stacked=self.stacked,
                                                        representation=self.representation, render=False)
@@ -117,7 +117,7 @@ class FootballWrapper(object):
 
     def step(self, action):
         r = 0.0
-        for _ in range(1):
+        for _ in range(3):
             obs, reward, done, info = self._env.step(action)
             # obs = np.concatenate((old_obs[:24], old_obs[88:]))
             # if obs[24] < 0.0:

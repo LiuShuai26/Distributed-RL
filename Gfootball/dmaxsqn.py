@@ -162,11 +162,11 @@ def worker_train(ps, replay_buffer, opt, learner_index):
 
     cache.start()
 
-    def signal_handler(signal, frame):
+    def cleanup():
         cache.end()
-        exit()
 
-    signal.signal(signal.SIGINT, signal_handler)
+    import atexit
+    atexit.register(cleanup)
 
     cnt = 1
     while True:
@@ -334,7 +334,6 @@ if __name__ == '__main__':
 
     # ------ end ------
 
-    # Create a parameter server with some random weights.
     if FLAGS.weights_file:
         ps = ParameterServer.remote([], [], weights_file=FLAGS.weights_file)
     else:
