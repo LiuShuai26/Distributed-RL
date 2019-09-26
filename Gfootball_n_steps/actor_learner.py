@@ -42,12 +42,14 @@ class Learner(object):
             with tf.variable_scope('main'):
                 mu, pi, logp_pi, self.logp_pi2, q1, q2, q1_pi, q2_pi, q1_mu, q2_mu \
                     = actor_critic(self.x_ph, self.x2_ph, self.a_ph, alpha_v,
+                                   hidden_sizes=opt.ac_kwargs['hidden_sizes'],
                                    action_space=opt.ac_kwargs['action_space'], model=opt.model)
 
             # Target value network
             with tf.variable_scope('target'):
                 _, _, logp_pi_, _,  _, _, q1_pi_, q2_pi_, q1_mu_, q2_mu_ = \
                     actor_critic(self.x2_ph, self.x2_ph, self.a_ph, alpha_v,
+                                 hidden_sizes=opt.ac_kwargs['hidden_sizes'],
                                  action_space=opt.ac_kwargs['action_space'], model=opt.model)
 
             # Count variables
@@ -225,6 +227,7 @@ class Actor(object):
             with tf.variable_scope('main'):
                 self.mu, self.pi, logp_pi, logp_pi2, q1, q2, q1_pi, q2_pi, q1_mu, q2_mu \
                     = actor_critic(self.x_ph, self.x2_ph, self.a_ph, alpha_v,
+                                   hidden_sizes=opt.ac_kwargs['hidden_sizes'],
                                    action_space=opt.ac_kwargs['action_space'], model=opt.model)
 
             # Set up summary Ops
