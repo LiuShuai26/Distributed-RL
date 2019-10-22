@@ -2,8 +2,6 @@ import numpy as np
 import tensorflow as tf
 import time
 import ray
-import gym
-from gym.spaces import Box, Discrete
 
 from hyperparams_gfootball import HyperParameters, FootballWrapper
 from actor_learner import Actor, Learner
@@ -12,25 +10,22 @@ import os
 import pickle
 import multiprocessing
 import copy
-import signal
-import datetime
+
 from collections import deque
 
 import inspect
 import json
+from ray.rllib.utils.compression import pack, unpack
 
-import gfootball
 import gfootball.env as football_env
 
 flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 
 # "Pendulum-v0" 'BipedalWalker-v2' 'LunarLanderContinuous-v2'
-flags.DEFINE_string("env_name", "LunarLander-v2", "game env")
+flags.DEFINE_string("env_name", "11_vs_11_easy_stochastic", "game env")
 flags.DEFINE_string("exp_name", "Exp1", "experiments name")
-flags.DEFINE_integer("total_epochs", 500, "total_epochs")
 flags.DEFINE_integer("num_workers", 1, "number of workers")
-flags.DEFINE_integer("num_learners", 1, "number of learners")
 flags.DEFINE_string("weights_file", "", "empty means False. "
                                         "[Maxret_weights.pickle] means restore weights from this pickle file.")
 flags.DEFINE_float("a_l_ratio", 200, "steps / sample_times")
@@ -43,17 +38,25 @@ class ReplayBuffer:
     """
 
     def __init__(self, Ln, obs_shape, act_shape, size):
-        self.buffer_o = np.zeros((size, Ln + 1)+obs_shape, dtype=np.float32)
+        self.obs_shape = obs_shape
+        if obs_shape != (115,):
+            self.buffer_o = np.array([['0'*2000]*(Ln+1)] * size, dtype=np.str)
+        else:
+            self.buffer_o = np.zeros((size, Ln + 1)+obs_shape, dtype=np.float32)
         self.buffer_a = np.zeros((size, Ln)+act_shape, dtype=np.float32)
         self.buffer_r = np.zeros((size, Ln), dtype=np.float32)
         self.buffer_d = np.zeros((size, Ln), dtype=np.float32)
         self.ptr, self.size, self.max_size = 0, 0, size
         self.steps, self.sample_times = 0, 0
-        self.worker_pool = set()
 
     def store(self, o_queue, a_r_d_queue, worker_index):
+
         obs, = np.stack(o_queue, axis=1)
-        self.buffer_o[self.ptr] = np.array(list(obs), dtype=np.float32)
+
+        if self.obs_shape != (115,):
+            self.buffer_o[self.ptr] = obs
+        else:
+            self.buffer_o[self.ptr] = np.array(list(obs), dtype=np.float32)
 
         a, r, d, = np.stack(a_r_d_queue, axis=1)
         self.buffer_a[self.ptr] = np.array(list(a), dtype=np.float32)
@@ -64,21 +67,18 @@ class ReplayBuffer:
         self.size = min(self.size + 1, self.max_size)
 
         self.steps += 1
-        self.worker_pool.add(worker_index)
 
-    def sample_batch(self, batch_size=32):
+    def sample_batch(self, batch_size):
         idxs = np.random.randint(0, self.size, size=batch_size)
         self.sample_times += 1
+
         return dict(obs=self.buffer_o[idxs],
                     acts=self.buffer_a[idxs],
                     rews=self.buffer_r[idxs],
                     done=self.buffer_d[idxs],)
 
     def get_counts(self):
-        return self.sample_times, self.steps, self.size, len(self.worker_pool)
-
-    def empty_worker_pool(self):
-        self.worker_pool = set()
+        return self.sample_times, self.steps, self.size
 
 
 @ray.remote
@@ -89,22 +89,18 @@ class ParameterServer(object):
 
         if weights_file:
             try:
-                pickle_in = open(weights_file, "rb")
-                self.weights = pickle.load(pickle_in)
-                print("****** weights restored! ******")
+                with open(weights_file, "rb") as pickle_in:
+                    self.weights = pickle.load(pickle_in)
+                    print("****** weights restored! ******")
             except:
                 print("------------------------------------------------")
                 print(weights_file)
                 print("------ error: weights file doesn't exist! ------")
+                exit()
         else:
             values = [value.copy() for value in values]
             self.weights = dict(zip(keys, values))
 
-    # def push(self, keys, values):
-    #     for key, value in zip(keys, values):
-    #         self.weights[key] += value
-
-    # TODO push gradients or parameters
     def push(self, keys, values):
         values = [value.copy() for value in values]
         for key, value in zip(keys, values):
@@ -132,6 +128,7 @@ class Cache(object):
         self.q1 = multiprocessing.Queue(10)
         self.q2 = multiprocessing.Queue(5)
         self.p1 = multiprocessing.Process(target=self.ps_update, args=(self.q1, self.q2, self.replay_buffer))
+        self.p1.daemon = True
 
     def ps_update(self, q1, q2, replay_buffer):
         print('os.pid of put_data():', os.getpid())
@@ -165,15 +162,19 @@ def worker_train(ps, replay_buffer, opt, learner_index):
 
     cache.start()
 
-    def cleanup():
-        cache.end()
-
-    import atexit
-    atexit.register(cleanup)
+    # TODO
+    # def cleanup():
+    #     cache.end()
+    #     print("***********************multiprocessing terminated!***********************")
+    #
+    # import atexit
+    # atexit.register(cleanup)
 
     cnt = 1
     while True:
         batch = cache.q1.get()
+        if opt.model == "cnn":
+            batch['obs'] = np.array([[unpack(o) for o in lno] for lno in batch['obs']])
         agent.train(batch, cnt)
         if cnt % 300 == 0:
             cache.q2.put(agent.get_weights())
@@ -204,12 +205,13 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
     ################################## deques reset
     t_queue = 1
-    o_queue.append((o,))
+    if opt.model == "cnn":
+        compressed_o = pack(o)
+        o_queue.append((compressed_o,))
+    else:
+        o_queue.append((o,))
 
     ################################## deques reset
-
-    # epochs = opt.total_epochs // opt.num_workers
-    total_steps = opt.steps_per_epoch * opt.total_epochs
 
     weights = ray.get(ps.pull.remote(keys))
     agent.set_weights(keys, weights)
@@ -219,7 +221,7 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
     while True:
         # don't need to random sample action if load weights from local.
         if t > opt.start_steps or opt.weights_file:
-            a = agent.get_action(o)
+            a = agent.get_action(o, deterministic=False)
         else:
             a = env.action_space.sample()
             t += 1
@@ -234,17 +236,16 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
         # that isn't based on the agent's state)
         d = False if ep_len == opt.max_ep_len else d
 
-        # Store experience to replay buffer
-        # replay_buffer.store.remote(o, a, r, o2, d, worker_index)
-
-        # Super critical, easy to overlook step: make sure to update
-        # most recent observation!
         o = o2
 
         #################################### deques store
 
         a_r_d_queue.append( (a, r, d,) )
-        o_queue.append((o2,))
+        if opt.model == "cnn":
+            compressed_o2 = pack(o2)
+            o_queue.append((compressed_o2,))
+        else:
+            o_queue.append((o2,))
 
         if t_queue % opt.Ln == 0:
             replay_buffer.store.remote(o_queue, a_r_d_queue, worker_index)
@@ -252,7 +253,10 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
         if d and t_queue % opt.Ln != 0:
             for _0 in range(opt.Ln - t_queue % opt.Ln):
                 a_r_d_queue.append((np.zeros(opt.a_shape, dtype=np.float32), 0.0, True,))
-                o_queue.append((np.zeros((opt.obs_dim,), dtype=np.float32), ))
+                if opt.model == "cnn":
+                    o_queue.append(None,)
+                else:
+                    o_queue.append((np.zeros((opt.obs_dim,), dtype=np.float32), ))
             replay_buffer.store.remote(o_queue, a_r_d_queue, worker_index)
 
         t_queue += 1
@@ -261,34 +265,41 @@ def worker_rollout(ps, replay_buffer, opt, worker_index):
 
         # End of episode. Training (ep_len times).
         if d or (ep_len == opt.max_ep_len):
-            sample_times, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
+            sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
 
-            while sample_times > 0 and steps / sample_times > opt.a_l_ratio:
-                sample_times, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
+            while sample_times > 0 and (steps-opt.start_steps) / sample_times > opt.a_l_ratio:
+                sample_times, steps, _ = ray.get(replay_buffer.get_counts.remote())
                 time.sleep(0.1)
 
             print('rollout_ep_len:', ep_len, 'rollout_ep_ret:', ep_ret)
-            # update parameters every episode
-            weights = ray.get(ps.pull.remote(keys))
-            agent.set_weights(keys, weights)
+
+            if steps > opt.start_steps:
+                # update parameters every episode
+                weights = ray.get(ps.pull.remote(keys))
+                agent.set_weights(keys, weights)
 
             o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
             ################################## deques reset
             t_queue = 1
-            o_queue.append((o,))
+            if opt.model == "cnn":
+                compressed_o = pack(o)
+                o_queue.append((compressed_o,))
+            else:
+                o_queue.append((o,))
 
             ################################## deques reset
 
 
 @ray.remote
-def worker_test(ps, replay_buffer, opt, time0, time1):
+def worker_test(ps, replay_buffer, opt):
 
     agent = Actor(opt, job="main")
 
     keys, weights = agent.get_weights()
 
-    sample_times1, steps, size, _ = ray.get(replay_buffer.get_counts.remote())
+    time0 = time1 = time.time()
+    sample_times1, steps, size = ray.get(replay_buffer.get_counts.remote())
 
     max_sample_times = 0
 
@@ -309,7 +320,7 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
 
         ep_ret = agent.test(test_env, replay_buffer)
 
-        sample_times2, steps, size, worker_alive = ray.get(replay_buffer.get_counts.remote())
+        sample_times2, steps, size = ray.get(replay_buffer.get_counts.remote())
         time2 = time.time()
 
         print("----------------------------------")
@@ -319,14 +330,8 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
         print("| env_steps:", steps*opt.Ln)
         print("| buffer_size:", size)
         print("| actual a_l_ratio:", str((steps-opt.start_steps)/(sample_times2+1))[:4])
-        print("| num of alive worker:", worker_alive)
         print('- update frequency:', (sample_times2-sample_times1)/(time2-time1), 'total time:', time2 - time0)
         print("----------------------------------")
-
-        if worker_alive < opt.num_workers:
-            worker_rollout.remote(ps, replay_buffer, opt, 9)
-            with open(opt.save_dir + "/" + 'Log.txt', 'a') as fp:
-                fp.write(str(datetime.datetime.now()) + ": worker_train start!\n")
 
         if sample_times2 // int(1e6) > max_sample_times:
             pickle_out = open(opt.save_dir + "/" + str(sample_times2 // int(1e6))[:3]+"M_weights.pickle", "wb")
@@ -336,7 +341,7 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
             max_sample_times = sample_times2 // int(1e6)
 
         if ep_ret > opt.max_ret:
-            pickle_out = open(opt.save_dir + "/" + "Maxret_weights.pickle", "wb")
+            pickle_out = open(opt.save_dir + "/" + "Max_weights.pickle", "wb")
             pickle.dump(weights_all, pickle_out)
             pickle_out.close()
             print("****** Weights saved by maxret! ******")
@@ -345,24 +350,22 @@ def worker_test(ps, replay_buffer, opt, time0, time1):
         time1 = time2
         sample_times1 = sample_times2
 
-        replay_buffer.empty_worker_pool.remote()
         time.sleep(5)
 
 
 if __name__ == '__main__':
 
-    ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
-    # ray.init()
+    # ray.init(object_store_memory=1000000000, redis_max_memory=1000000000)
+    ray.init()
 
     # ------ HyperParameters ------
-    opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.total_epochs, FLAGS.num_workers, FLAGS.a_l_ratio,
+    opt = HyperParameters(FLAGS.env_name, FLAGS.exp_name, FLAGS.num_workers, FLAGS.a_l_ratio,
                           FLAGS.weights_file)
     All_Parameters = copy.deepcopy(vars(opt))
     All_Parameters["wrapper"] = inspect.getsource(FootballWrapper)
     import importlib
     scenario = importlib.import_module('gfootball.scenarios.{}'.format(opt.rollout_env_name))
     All_Parameters["rollout_env_class"] = inspect.getsource(scenario.build_scenario)
-    All_Parameters["ac_kwargs"]['action_space'] = ""
     All_Parameters["obs_space"] = ""
     All_Parameters["act_space"] = ""
 
@@ -388,22 +391,19 @@ if __name__ == '__main__':
     # Start some training tasks.
     task_rollout = [worker_rollout.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_workers)]
 
-    if FLAGS.weights_file:
-        opt.start_steps = int(1e6)
-
+    if opt.weights_file:
+        start_steps = opt.start_steps / 10
+    else:
+        start_steps = opt.start_steps
     # store at least start_steps in buffer before training
-    _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
-    while steps < opt.start_steps:
-        _, steps, _, _ = ray.get(replay_buffer.get_counts.remote())
-        print(steps)
+    _, steps, _ = ray.get(replay_buffer.get_counts.remote())
+    while steps < start_steps:
+        _, steps, _ = ray.get(replay_buffer.get_counts.remote())
+        print('start steps before learn:', steps)
         time.sleep(1)
 
-    task_train = [worker_train.remote(ps, replay_buffer, opt, i) for i in range(FLAGS.num_learners)]
+    task_train = [worker_train.remote(ps, replay_buffer, opt, i) for i in range(opt.num_learners)]
 
-    time0 = time.time()
     while True:
-        time1 = time.time()
-        with open(opt.save_dir + "/" + 'Log.txt', 'a') as fp:
-            fp.write(str(datetime.datetime.now())+": worker_test start!\n")
-        task_test = worker_test.remote(ps, replay_buffer, opt, time0, time1)
+        task_test = worker_test.remote(ps, replay_buffer, opt)
         ray.wait([task_test, ])
