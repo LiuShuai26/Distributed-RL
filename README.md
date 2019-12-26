@@ -6,7 +6,7 @@ This framework inspired by general-purpose RL training system **Rapid** from Ope
 
 Rapid framework:
 ![rapid-architecture@2x--1-](./tutorial/Pictures/rapid-architecture@2x--1-.png)
-Our framework:
+This framework:
 ![ddrlframework](./tutorial/Pictures/ddrlframework.jpg)
 
 ------
