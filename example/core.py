@@ -5,7 +5,7 @@ EPS = 1e-8
 
 
 def placeholder(dim=None):
-    return tf.placeholder(dtype=tf.float32, shape=(None,dim) if dim else (None,))
+    return tf.placeholder(dtype=tf.float32, shape=(None, dim) if dim else (None,))
 
 
 def placeholders(*args):
@@ -28,14 +28,14 @@ def count_vars(scope):
 
 
 def gaussian_likelihood(x, mu, log_std):
-    pre_sum = -0.5 * (((x-mu)/(tf.exp(log_std)+EPS))**2 + 2*log_std + np.log(2*np.pi))
+    pre_sum = -0.5 * (((x - mu) / (tf.exp(log_std) + EPS)) ** 2 + 2 * log_std + np.log(2 * np.pi))
     return tf.reduce_sum(pre_sum, axis=1)
 
 
 def clip_but_pass_gradient(x, l=-1., u=1.):
     clip_up = tf.cast(x > u, tf.float32)
     clip_low = tf.cast(x < l, tf.float32)
-    return x + tf.stop_gradient((u - x)*clip_up + (l - x)*clip_low)
+    return x + tf.stop_gradient((u - x) * clip_up + (l - x) * clip_low)
 
 
 """
@@ -83,22 +83,21 @@ def apply_squashing_func(mu, pi, logp_pi):
     mu = tf.tanh(mu)
     pi = tf.tanh(pi)
     # To avoid evil machine precision error, strictly clip 1-pi**2 to [0,1] range.
-    logp_pi -= tf.reduce_sum(tf.log(clip_but_pass_gradient(1 - pi**2, l=0, u=1) + 1e-6), axis=1)
+    logp_pi -= tf.reduce_sum(tf.log(clip_but_pass_gradient(1 - pi ** 2, l=0, u=1) + 1e-6), axis=1)
     return mu, pi, logp_pi
 
 
-# Actor-Critics
-def mlp_actor_critic(x, x2, a, hidden_sizes=(400,300), activation=tf.nn.relu,
-                     output_activation=None, policy=mlp_gaussian_policy, action_space=None):
+"""
+Actor-Critics
+"""
 
+
+def mlp_actor_critic(x, a, hidden_sizes=(400, 300), activation=tf.nn.relu,
+                     output_activation=None, policy=mlp_gaussian_policy, action_space=None):
     # policy
     with tf.variable_scope('pi'):
         mu, pi, logp_pi = policy(x, a, hidden_sizes, activation, output_activation)
         mu, pi, logp_pi = apply_squashing_func(mu, pi, logp_pi)
-
-    with tf.variable_scope('pi', reuse=True):
-        mu2, pi2, logp_pi2 = policy(x2, a, hidden_sizes, activation, output_activation)
-        mu2, pi2, logp_pi2 = apply_squashing_func(mu2, pi2, logp_pi2)
 
     # make sure actions are in correct range
     action_scale = action_space.high[0]
@@ -106,16 +105,15 @@ def mlp_actor_critic(x, x2, a, hidden_sizes=(400,300), activation=tf.nn.relu,
     pi *= action_scale
 
     # vfs
-    # tf.squeeze( shape(?,1), axis=1 ) = shape(?,)
-    vf_mlp = lambda x : tf.squeeze(mlp(x, list(hidden_sizes)+[1], activation, None), axis=1)
-
+    vf_mlp = lambda x: tf.squeeze(mlp(x, list(hidden_sizes) + [1], activation, None), axis=1)
     with tf.variable_scope('q1'):
-        q1 = vf_mlp(tf.concat([x,a], axis=-1))
+        q1 = vf_mlp(tf.concat([x, a], axis=-1))
     with tf.variable_scope('q1', reuse=True):
-        q1_pi = vf_mlp(tf.concat([x,pi], axis=-1))
+        q1_pi = vf_mlp(tf.concat([x, pi], axis=-1))
     with tf.variable_scope('q2'):
-        q2 = vf_mlp(tf.concat([x,a], axis=-1))
+        q2 = vf_mlp(tf.concat([x, a], axis=-1))
     with tf.variable_scope('q2', reuse=True):
-        q2_pi = vf_mlp(tf.concat([x,pi], axis=-1))
-
-    return mu, pi, logp_pi, logp_pi2, q1, q2, q1_pi, q2_pi
+        q2_pi = vf_mlp(tf.concat([x, pi], axis=-1))
+    with tf.variable_scope('v'):
+        v = vf_mlp(x)
+    return mu, pi, logp_pi, q1, q2, q1_pi, q2_pi, v
