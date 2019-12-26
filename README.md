@@ -5,9 +5,9 @@ Distributed Deep Reinforcement Learning by Ray and TensorFlow.
 This framework inspired by general-purpose RL training system **Rapid** from OpenAI.
 
 Rapid framework:
-![rapid-architecture@2x--1-](C:/Users/Shuai/Documents/GitHub/Distributed-DRL/pictures/rapid-architecture@2x--1-.png)
+![rapid-architecture@2x--1-](./tutorial/Pictures/rapid-architecture@2x--1-.png)
 Our framework:
-![ddrlframework](C:/Users/Shuai/Documents/GitHub/Distributed-DRL/pictures/ddrlframework.jpg)
+![ddrlframework](./tutorial/Pictures/ddrlframework.jpg)
 
 ------
 
